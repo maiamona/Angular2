@@ -104,5 +104,5 @@ dist
 .tern-port
 
 #Maiamona
-*compiled.js
+*.js.map
 *.js
