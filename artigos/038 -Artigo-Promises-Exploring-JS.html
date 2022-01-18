@@ -1,0 +1,2229 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>25. Promises for asynchronous programming</title>
+    <link href="stylesheet.css" type="text/css" rel="stylesheet" />
+    <link rel="icon" href="images/favicon-128.png" sizes="128x128">
+    <link rel="icon" href="images/favicon-32.png" sizes="32x32">
+    <link rel="icon" href="images/favicon-16.png" sizes="16x16">
+</head>
+<body>
+
+<div id="top-bar">
+    <div id="top-bar-content">
+        <b>25. Promises for asynchronous programming</b><br>
+        <a href="index.html#toc_ch_promises">Table of contents</a><br>
+        Please support this book:
+        <a href="https://leanpub.com/exploring-es6/">buy it (PDF, EPUB, MOBI)</a>
+        or
+        <a href="http://www.2ality.com/p/donate.html">donate</a>
+    </div>
+</div>
+
+<div id="adbox">
+<div id="adbox-explain">(Ad, please don’t block.)</div>
+
+    <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CKYIEKQL&placement=exploringjscom" id="_carbonads_js"></script>
+
+</div>
+
+<div id="page-content">
+
+
+<h2 id="ch_promises">
+<span class="section-number">25. </span>Promises for asynchronous programming <a class="header-anchor" href="#ch_promises" aria-hidden="true">#</a></h2>
+
+<p>This chapter is an introduction to asynchronous programming via Promises in general and the ECMAScript 6 Promise API in particular. <a href="ch_async.html#ch_async">The previous chapter</a> explains the foundations of asynchronous programming in JavaScript. You can consult it whenever there is something that you don&#x2019;t understand in this chapter.</p>
+
+<hr class="scene-break">
+
+<ul>
+  <li>25.1. <a href="ch_promises.html#sec_overview-promises">Overview</a>
+    <ul>
+      <li>25.1.1. Chaining <code>then()</code> calls</li>
+      <li>25.1.2. Executing asynchronous functions in parallel</li>
+      <li>25.1.3. Glossary: Promises</li>
+    </ul>
+  </li>
+  <li>25.2. <a href="ch_promises.html#sec_introduction-promises">Introduction: Promises</a>
+</li>
+  <li>25.3. <a href="ch_promises.html#sec_first-example-promises">A first example</a>
+</li>
+  <li>25.4. <a href="ch_promises.html#sec_three-ways-understanding-promises">Three ways of understanding Promises</a>
+    <ul>
+      <li>25.4.1. Conceptually: calling a Promise-based function is blocking</li>
+      <li>25.4.2. A Promise is a container for an asynchronously delivered value</li>
+      <li>25.4.3. A Promise is an event emitter</li>
+    </ul>
+  </li>
+  <li>25.5. <a href="ch_promises.html#sec_creating-using-promises">Creating and using Promises</a>
+    <ul>
+      <li>25.5.1. Producing a Promise</li>
+      <li>25.5.2. The states of Promises</li>
+      <li>25.5.3. Consuming a Promise</li>
+      <li>25.5.4. Promises are always asynchronous</li>
+    </ul>
+  </li>
+  <li>25.6. <a href="ch_promises.html#sec_examples-promises">Examples</a>
+    <ul>
+      <li>25.6.1. Example: promisifying <code>fs.readFile()</code>
+</li>
+      <li>25.6.2. Example: promisifying <code>XMLHttpRequest</code>
+</li>
+      <li>25.6.3. Example: delaying an activity</li>
+      <li>25.6.4. Example: timing out a Promise</li>
+    </ul>
+  </li>
+  <li>25.7. <a href="ch_promises.html#sec_other-ways-creating-promises">Other ways of creating Promises</a>
+    <ul>
+      <li>25.7.1. <code>Promise.resolve()</code>
+</li>
+      <li>25.7.2. <code>Promise.reject()</code>
+</li>
+    </ul>
+  </li>
+  <li>25.8. <a href="ch_promises.html#sec_chaining-promises">Chaining Promises</a>
+    <ul>
+      <li>25.8.1. Resolving Q with a normal value</li>
+      <li>25.8.2. Resolving Q with a thenable</li>
+      <li>25.8.3. Resolving Q from <code>onRejected</code>
+</li>
+      <li>25.8.4. Rejecting Q by throwing an exception</li>
+      <li>25.8.5. Chaining and errors</li>
+    </ul>
+  </li>
+  <li>25.9. <a href="ch_promises.html#sec_common-promise-chaining-mistakes">Common Promise chaining mistakes</a>
+    <ul>
+      <li>25.9.1. Mistake: losing the tail of a Promise chain</li>
+      <li>25.9.2. Mistake: nesting Promises</li>
+      <li>25.9.3. Mistake: creating Promises instead of chaining</li>
+      <li>25.9.4. Mistake: using <code>then()</code> for error handling</li>
+    </ul>
+  </li>
+  <li>25.10. <a href="ch_promises.html#sec_error-handling-promises">Tips for error handling</a>
+    <ul>
+      <li>25.10.1. Operational errors versus programmer errors</li>
+      <li>25.10.2. Handling exceptions in Promise-based functions</li>
+      <li>25.10.3. Further reading</li>
+    </ul>
+  </li>
+  <li>25.11. <a href="ch_promises.html#sec_composing-promises">Composing Promises</a>
+    <ul>
+      <li>25.11.1. Manually forking and joining computations</li>
+      <li>25.11.2. Forking and joining computations via <code>Promise.all()</code>
+</li>
+      <li>25.11.3. <code>map()</code> via <code>Promise.all()</code>
+</li>
+      <li>25.11.4. Timing out via <code>Promise.race()</code>
+</li>
+    </ul>
+  </li>
+  <li>25.12. <a href="ch_promises.html#sec_additional-promise-methods">Two useful additional Promise methods</a>
+    <ul>
+      <li>25.12.1. <code>done()</code>
+</li>
+      <li>25.12.2. <code>finally()</code>
+</li>
+    </ul>
+  </li>
+  <li>25.13. <a href="ch_promises.html#sec_nodejs-callbacks-promises">Node.js: using callback-based sync functions with Promises</a>
+</li>
+  <li>25.14. <a href="ch_promises.html#sec_es6-compatible-promise-libraries">ES6-compatible Promise libraries</a>
+</li>
+  <li>25.15. <a href="ch_promises.html#sec_promises-via-generators">Next step: using Promises via generators</a>
+</li>
+  <li>25.16. <a href="ch_promises.html#sec_demo-promise">Promises in depth: a simple implementation</a>
+    <ul>
+      <li>25.16.1. A stand-alone Promise</li>
+      <li>25.16.2. Chaining</li>
+      <li>25.16.3. Flattening</li>
+      <li>25.16.4. Promise states in more detail</li>
+      <li>25.16.5. Exceptions</li>
+      <li>25.16.6. Revealing constructor pattern</li>
+    </ul>
+  </li>
+  <li>25.17. <a href="ch_promises.html#sec_promises-pros-cons">Advantages and limitations of Promises</a>
+    <ul>
+      <li>25.17.1. Advantages of Promises</li>
+      <li>25.17.2. Promises are not always the best choice</li>
+    </ul>
+  </li>
+  <li>25.18. <a href="ch_promises.html#sec_reference-promises">Reference: the ECMAScript 6 Promise API</a>
+    <ul>
+      <li>25.18.1. <code>Promise</code> constructor</li>
+      <li>25.18.2. Static <code>Promise</code> methods</li>
+      <li>25.18.3. <code>Promise.prototype</code> methods</li>
+    </ul>
+  </li>
+  <li>25.19. <a href="ch_promises.html#sec_further-reading-promises">Further reading</a>
+</li>
+</ul>
+
+<hr class="scene-break">
+
+
+<h3 id="sec_overview-promises">
+<span class="section-number">25.1 </span>Overview <a class="header-anchor" href="#sec_overview-promises" aria-hidden="true">#</a></h3>
+
+<p>Promises are an alternative to callbacks for delivering the results of an asynchronous computation. They require more effort from implementors of asynchronous functions, but provide several benefits for users of those functions.</p>
+
+<p>The following function returns a result asynchronously, via a Promise:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">asyncFunc</code><code class="p">()</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">(</code>
+        <code class="kd">function</code> <code class="p">(</code><code class="nx">resolve</code><code class="p">,</code> <code class="nx">reject</code><code class="p">)</code> <code class="p">{</code>
+            <code class="err">&#xB7;&#xB7;&#xB7;</code>
+            <code class="nx">resolve</code><code class="p">(</code><code class="nx">result</code><code class="p">);</code>
+            <code class="err">&#xB7;&#xB7;&#xB7;</code>
+            <code class="nx">reject</code><code class="p">(</code><code class="nx">error</code><code class="p">);</code>
+        <code class="p">});</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>You call <code>asyncFunc()</code> as follows:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="err">&#xB7;&#xB7;&#xB7;</code> <code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">error</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="err">&#xB7;&#xB7;&#xB7;</code> <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_chaining-then-calls">
+<span class="section-number">25.1.1 </span>Chaining <code>then()</code> calls <a class="header-anchor" href="#_chaining-then-calls" aria-hidden="true">#</a></h4>
+
+<p><code>then()</code> always returns a Promise, which enables you to chain method calls:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc1</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result1</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="c1">// Use result1</code>
+    <code class="k">return</code> <code class="nx">asyncFunction2</code><code class="p">();</code> <code class="c1">// (A)</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result2</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="c1">// (B)</code>
+    <code class="c1">// Use result2</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">error</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="c1">// Handle errors of asyncFunc1() and asyncFunc2()</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>How the Promise P returned by <code>then()</code> is settled depends on what its callback does:</p>
+
+<ul>
+  <li>If it returns a Promise (as in line A), the settlement of that Promise is forwarded to P. That&#x2019;s why the callback from line B can pick up the settlement of <code>asyncFunction2</code>&#x2019;s Promise.</li>
+  <li>If it returns a different value, that value is used to settle P.</li>
+  <li>If throws an exception then P is rejected with that exception.</li>
+</ul>
+
+<p>Furthermore, note how <code>catch()</code> handles the errors of two asynchronous function calls (<code>asyncFunction1()</code> and <code>asyncFunction2()</code>). That is, uncaught errors are passed on until there is an error handler.</p>
+
+<h4 id="_executing-asynchronous-functions-in-parallel">
+<span class="section-number">25.1.2 </span>Executing asynchronous functions in parallel <a class="header-anchor" href="#_executing-asynchronous-functions-in-parallel" aria-hidden="true">#</a></h4>
+
+<p>If you chain asynchronous function calls via <code>then()</code>, they are executed sequentially, one at a time:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc1</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="nx">asyncFunc2</code><code class="p">());</code>
+</pre></div>
+
+</figure>
+
+<p>If you don&#x2019;t do that and call all of them immediately, they are basically executed in parallel (a <em>fork</em> in Unix process terminology):</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc1</code><code class="p">();</code>
+<code class="nx">asyncFunc2</code><code class="p">();</code>
+</pre></div>
+
+</figure>
+
+<p><code>Promise.all()</code> enables you to be notified once all results are in (a <em>join</em> in Unix process terminology). Its input is an Array of Promises, its output a single Promise that is fulfilled with an Array of the results.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nb">Promise</code><code class="p">.</code><code class="nx">all</code><code class="p">([</code>
+    <code class="nx">asyncFunc1</code><code class="p">(),</code>
+    <code class="nx">asyncFunc2</code><code class="p">(),</code>
+<code class="p">])</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(([</code><code class="nx">result1</code><code class="p">,</code> <code class="nx">result2</code><code class="p">])</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">err</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="c1">// Receives first rejection among the Promises</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_glossary-promises">
+<span class="section-number">25.1.3 </span>Glossary: Promises <a class="header-anchor" href="#_glossary-promises" aria-hidden="true">#</a></h4>
+
+
+<p>The Promise API is about delivering results asynchronously. A <em>Promise object</em> (short: Promise) is a stand-in for the result, which is delivered via that object.</p>
+
+<p>States:</p>
+
+<ul>
+  <li>A Promise is always in one of three mutually exclusive states:
+    <ul>
+      <li>Before the result is ready, the Promise is <em>pending</em>.</li>
+      <li>If a result is available, the Promise is <em>fulfilled</em>.</li>
+      <li>If an error happened, the Promise is <em>rejected</em>.</li>
+    </ul>
+  </li>
+  <li>A Promise is <em>settled</em> if &#x201C;things are done&#x201D; (if it is either fulfilled or rejected).</li>
+  <li>A Promise is settled exactly once and then remains unchanged.</li>
+</ul>
+
+<p>Reacting to state changes:</p>
+
+<ul>
+  <li>
+<em>Promise reactions</em> are callbacks that you register with the Promise method <code>then()</code>, to be notified of a fulfillment or a rejection.</li>
+  <li>A <em>thenable</em> is an object that has a Promise-style <code>then()</code> method. Whenever the API is only interested in being notified of settlements, it only demands thenables (e.g. the values returned from <code>then()</code> and <code>catch()</code>; or the values handed to <code>Promise.all()</code> and <code>Promise.race()</code>).</li>
+</ul>
+
+<p>Changing states: There are two operations for changing the state of a Promise. After you have invoked either one of them once, further invocations have no effect.</p>
+
+<ul>
+  <li>
+<em>Rejecting</em> a Promise means that the Promise becomes rejected.</li>
+  <li>
+<em>Resolving</em> a Promise has different effects, depending on what value you are resolving with:
+    <ul>
+      <li>Resolving with a normal (non-thenable) value fulfills the Promise.</li>
+      <li>Resolving a Promise P with a thenable T means that P can&#x2019;t be resolved anymore and will now follow T&#x2019;s state, including its fulfillment or rejection value. The appropriate P reactions will get called once T settles (or are called immediately if T is already settled).</li>
+    </ul>
+  </li>
+</ul>
+
+
+<h3 id="sec_introduction-promises">
+<span class="section-number">25.2 </span>Introduction: Promises <a class="header-anchor" href="#sec_introduction-promises" aria-hidden="true">#</a></h3>
+
+<p>Promises are a pattern that helps with one particular kind of asynchronous programming: a function (or method) that returns a single result asynchronously. One popular way of receiving such a result is via a callback (&#x201C;callbacks as continuations&#x201D;):</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunction</code><code class="p">(</code><code class="nx">arg1</code><code class="p">,</code> <code class="nx">arg2</code><code class="p">,</code>
+    <code class="nx">result</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">result</code><code class="p">);</code>
+    <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>Promises provide a better way of working with callbacks: Now an asynchronous function returns a <em>Promise</em>, an object that serves as a placeholder and container for the final result. Callbacks registered via the Promise method <code>then()</code> are notified of the result:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunction</code><code class="p">(</code><code class="nx">arg1</code><code class="p">,</code> <code class="nx">arg2</code><code class="p">)</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">result</code><code class="p">);</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>Compared to callbacks as continuations, Promises have the following advantages:</p>
+
+<ul>
+  <li>No inversion of control: similarly to synchronous code, Promise-based functions return results, they don&#x2019;t (directly) continue &#x2013; and control &#x2013; execution via callbacks. That is, the caller stays in control.</li>
+  <li>Chaining is simpler: If the callback of <code>then()</code> returns a Promise (e.g. the result of calling another Promise-based function) then <code>then()</code> returns that Promise (how this really works is more complicated and explained later). As a consequence, you can chain <code>then()</code> method calls:
+    <figure class="code">
+<div class="highlight"><pre><code></code>  <code class="nx">asyncFunction1</code><code class="p">(</code><code class="nx">a</code><code class="p">,</code> <code class="nx">b</code><code class="p">)</code>
+  <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result1</code> <code class="p">=&gt;</code> <code class="p">{</code>
+      <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">result1</code><code class="p">);</code>
+      <code class="k">return</code> <code class="nx">asyncFunction2</code><code class="p">(</code><code class="nx">x</code><code class="p">,</code> <code class="nx">y</code><code class="p">);</code>
+  <code class="p">})</code>
+  <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result2</code> <code class="p">=&gt;</code> <code class="p">{</code>
+      <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">result2</code><code class="p">);</code>
+  <code class="p">});</code>
+</pre></div>
+
+    </figure>
+  </li>
+  <li>Composing asynchronous calls (loops, mapping, etc.): is a little easier, because you have data (Promise objects) you can work with.</li>
+  <li>Error handling: As we shall see later, error handling is simpler with Promises, because, once again, there isn&#x2019;t an inversion of control. Furthermore, both exceptions and asynchronous errors are managed the same way.</li>
+  <li>Cleaner signatures: With callbacks, the parameters of a function are mixed; some are input for the function, others are responsible for delivering its output. With Promises, function signatures become cleaner; all parameters are input.</li>
+  <li>Standardized: Prior to Promises, there were several incompatible ways of handling asynchronous results (Node.js callbacks, XMLHttpRequest, IndexedDB, etc.). With Promises, there is a clearly defined standard: ECMAScript 6. ES6 follows the standard <a href="ch_promises.html#ch_promises_ref_1">Promises/A+ [1]</a>. Since ES6, an increasing number of APIs is based on Promises.</li>
+</ul>
+
+
+<h3 id="sec_first-example-promises">
+<span class="section-number">25.3 </span>A first example <a class="header-anchor" href="#sec_first-example-promises" aria-hidden="true">#</a></h3>
+
+<p>Let&#x2019;s look at a first example, to give you a taste of what working with Promises is like.</p>
+
+<p>With Node.js-style callbacks, reading a file asynchronously looks like this:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">fs</code><code class="p">.</code><code class="nx">readFile</code><code class="p">(</code><code class="s1">&apos;config.json&apos;</code><code class="p">,</code>
+    <code class="kd">function</code> <code class="p">(</code><code class="nx">error</code><code class="p">,</code> <code class="nx">text</code><code class="p">)</code> <code class="p">{</code>
+        <code class="k">if</code> <code class="p">(</code><code class="nx">error</code><code class="p">)</code> <code class="p">{</code>
+            <code class="nx">console</code><code class="p">.</code><code class="nx">error</code><code class="p">(</code><code class="s1">&apos;Error while reading config file&apos;</code><code class="p">);</code>
+        <code class="p">}</code> <code class="k">else</code> <code class="p">{</code>
+            <code class="k">try</code> <code class="p">{</code>
+                <code class="kr">const</code> <code class="nx">obj</code> <code class="o">=</code> <code class="nx">JSON</code><code class="p">.</code><code class="nx">parse</code><code class="p">(</code><code class="nx">text</code><code class="p">);</code>
+                <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">JSON</code><code class="p">.</code><code class="nx">stringify</code><code class="p">(</code><code class="nx">obj</code><code class="p">,</code> <code class="kc">null</code><code class="p">,</code> <code class="mi">4</code><code class="p">));</code>
+            <code class="p">}</code> <code class="k">catch</code> <code class="p">(</code><code class="nx">e</code><code class="p">)</code> <code class="p">{</code>
+                <code class="nx">console</code><code class="p">.</code><code class="nx">error</code><code class="p">(</code><code class="s1">&apos;Invalid JSON in file&apos;</code><code class="p">);</code>
+            <code class="p">}</code>
+        <code class="p">}</code>
+    <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>With Promises, the same functionality is used like this:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">readFilePromisified</code><code class="p">(</code><code class="s1">&apos;config.json&apos;</code><code class="p">)</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">text</code><code class="p">)</code> <code class="p">{</code> <code class="c1">// (A)</code>
+    <code class="kr">const</code> <code class="nx">obj</code> <code class="o">=</code> <code class="nx">JSON</code><code class="p">.</code><code class="nx">parse</code><code class="p">(</code><code class="nx">text</code><code class="p">);</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">JSON</code><code class="p">.</code><code class="nx">stringify</code><code class="p">(</code><code class="nx">obj</code><code class="p">,</code> <code class="kc">null</code><code class="p">,</code> <code class="mi">4</code><code class="p">));</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">error</code><code class="p">)</code> <code class="p">{</code> <code class="c1">// (B)</code>
+    <code class="c1">// File read error or JSON SyntaxError</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">error</code><code class="p">(</code><code class="s1">&apos;An error occurred&apos;</code><code class="p">,</code> <code class="nx">error</code><code class="p">);</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>There are still callbacks, but they are provided via methods that are invoked on the result (<code>then()</code> and <code>catch()</code>). The error callback in line B is convenient in two ways: First, it&#x2019;s a single style of handling errors (versus <code>if (error)</code> and <code>try-catch</code> in the previous example). Second, you can handle the errors of both <code>readFilePromisified()</code> and the callback in line A from a single location.</p>
+
+<p>The code of <code>readFilePromisified()</code> is <a href="ch_promises.html#readFilePromisified">shown later</a>.</p>
+
+
+<h3 id="sec_three-ways-understanding-promises">
+<span class="section-number">25.4 </span>Three ways of understanding Promises <a class="header-anchor" href="#sec_three-ways-understanding-promises" aria-hidden="true">#</a></h3>
+
+<p>Let&#x2019;s look at three ways of understanding Promises.</p>
+
+<p>The following code contains a Promise-based function <code>asyncFunc()</code> and its invocation.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">asyncFunc</code><code class="p">()</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">((</code><code class="nx">resolve</code><code class="p">,</code> <code class="nx">reject</code><code class="p">)</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="c1">// (A)</code>
+        <code class="nx">setTimeout</code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="nx">resolve</code><code class="p">(</code><code class="s1">&apos;DONE&apos;</code><code class="p">),</code> <code class="mi">100</code><code class="p">);</code> <code class="c1">// (B)</code>
+    <code class="p">});</code>
+<code class="p">}</code>
+<code class="nx">asyncFunc</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="s1">&apos;Result: &apos;</code><code class="o">+</code><code class="nx">x</code><code class="p">));</code>
+
+<code class="c1">// Output:</code>
+<code class="c1">// Result: DONE</code>
+</pre></div>
+
+</figure>
+
+<p><code>asyncFunc()</code> returns a Promise. Once the actual result <code>&apos;DONE&apos;</code> of the asynchronous computation is ready, it is delivered via <code>resolve()</code> (line B), which is a parameter of the callback that starts in line A.</p>
+
+<p>So what is a Promise?</p>
+
+<ul>
+  <li>Conceptually, invoking <code>asyncFunc()</code> is a blocking function call.</li>
+  <li>A Promise is both a container for a value and an event emitter.</li>
+</ul>
+
+<h4 id="_conceptually-calling-a-promise-based-function-is-blocking">
+<span class="section-number">25.4.1 </span>Conceptually: calling a Promise-based function is blocking <a class="header-anchor" href="#_conceptually-calling-a-promise-based-function-is-blocking" aria-hidden="true">#</a></h4>
+
+<p>The following code invokes <code>asyncFunc()</code> from the async function <code>main()</code>. <a href="http://exploringjs.com/es2016-es2017/ch_async-functions.html">Async functions</a> are a feature of ECMAScript 2017.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">async</code> <code class="kd">function</code> <code class="nx">main</code><code class="p">()</code> <code class="p">{</code>
+    <code class="kr">const</code> <code class="nx">x</code> <code class="o">=</code> <code class="nx">await</code> <code class="nx">asyncFunc</code><code class="p">();</code> <code class="c1">// (A)</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="s1">&apos;Result: &apos;</code><code class="o">+</code><code class="nx">x</code><code class="p">);</code> <code class="c1">// (B)</code>
+
+    <code class="c1">// Same as:</code>
+    <code class="c1">// asyncFunc()</code>
+    <code class="c1">// .then(x =&gt; console.log(&apos;Result: &apos;+x));</code>
+<code class="p">}</code>
+<code class="nx">main</code><code class="p">();</code>
+</pre></div>
+
+</figure>
+
+<p>The body of <code>main()</code> expresses well what&#x2019;s going on <em>conceptually</em>, how we usually think about asynchronous computations. Namely, <code>asyncFunc()</code> is a blocking function call:</p>
+
+<ul>
+  <li>Line A: Wait until <code>asyncFunc()</code> is finished.</li>
+  <li>Line B: Then log its result <code>x</code>.</li>
+</ul>
+
+<p>Prior to ECMAScript 6 and generators, you couldn&#x2019;t suspend and resume code. That&#x2019;s why, for Promises, you put everything that happens after the code is resumed into a callback. Invoking that callback is the same as resuming the code.</p>
+
+<h4 id="_a-promise-is-a-container-for-an-asynchronously-delivered-value">
+<span class="section-number">25.4.2 </span>A Promise is a container for an asynchronously delivered value <a class="header-anchor" href="#_a-promise-is-a-container-for-an-asynchronously-delivered-value" aria-hidden="true">#</a></h4>
+
+<p>If a function returns a Promise then that Promise is like a blank into which the function will (usually) fill in its result, once it has computed it. You can simulate a simple version of this process via an Array:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">asyncFunc</code><code class="p">()</code> <code class="p">{</code>
+    <code class="kr">const</code> <code class="nx">blank</code> <code class="o">=</code> <code class="p">[];</code>
+    <code class="nx">setTimeout</code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="nx">blank</code><code class="p">.</code><code class="nx">push</code><code class="p">(</code><code class="s1">&apos;DONE&apos;</code><code class="p">),</code> <code class="mi">100</code><code class="p">);</code>
+    <code class="k">return</code> <code class="nx">blank</code><code class="p">;</code>
+<code class="p">}</code>
+<code class="kr">const</code> <code class="nx">blank</code> <code class="o">=</code> <code class="nx">asyncFunc</code><code class="p">();</code>
+<code class="c1">// Wait until the value has been filled in</code>
+<code class="nx">setTimeout</code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="kr">const</code> <code class="nx">x</code> <code class="o">=</code> <code class="nx">blank</code><code class="p">[</code><code class="mi">0</code><code class="p">];</code> <code class="c1">// (A)</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="s1">&apos;Result: &apos;</code><code class="o">+</code><code class="nx">x</code><code class="p">);</code>
+<code class="p">},</code> <code class="mi">200</code><code class="p">);</code>
+</pre></div>
+
+</figure>
+
+<p>With Promises, you don&#x2019;t access the eventual value via <code>[0]</code> (as in line A), you use method <code>then()</code> and a callback.</p>
+
+<h4 id="_a-promise-is-an-event-emitter">
+<span class="section-number">25.4.3 </span>A Promise is an event emitter <a class="header-anchor" href="#_a-promise-is-an-event-emitter" aria-hidden="true">#</a></h4>
+
+<p>Another way to view a Promise is as an object that emits events.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">asyncFunc</code><code class="p">()</code> <code class="p">{</code>
+    <code class="kr">const</code> <code class="nx">eventEmitter</code> <code class="o">=</code> <code class="p">{</code> <code class="nx">success</code><code class="o">:</code> <code class="p">[]</code> <code class="p">};</code>
+    <code class="nx">setTimeout</code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="c1">// (A)</code>
+        <code class="k">for</code> <code class="p">(</code><code class="kr">const</code> <code class="nx">handler</code> <code class="k">of</code> <code class="nx">eventEmitter</code><code class="p">.</code><code class="nx">success</code><code class="p">)</code> <code class="p">{</code>
+            <code class="nx">handler</code><code class="p">(</code><code class="s1">&apos;DONE&apos;</code><code class="p">);</code>
+        <code class="p">}</code>
+    <code class="p">},</code> <code class="mi">100</code><code class="p">);</code>
+    <code class="k">return</code> <code class="nx">eventEmitter</code><code class="p">;</code>
+<code class="p">}</code>
+<code class="nx">asyncFunc</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">success</code><code class="p">.</code><code class="nx">push</code><code class="p">(</code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="s1">&apos;Result: &apos;</code><code class="o">+</code><code class="nx">x</code><code class="p">));</code> <code class="c1">// (B)</code>
+</pre></div>
+
+</figure>
+
+<p>Registering the event listener (line B) can be done after calling <code>asyncFunc()</code>, because the callback handed to <code>setTimeout()</code> (line A) is executed asynchronously (after this piece of code is finished).</p>
+
+<p>Normal event emitters specialize in delivering multiple events, starting as soon as you register.</p>
+
+<p>In contrast, Promises specialize in delivering exactly one value and come with built-in protection against registering too late: the result of a Promise is cached and passed to event listeners that are registered after the Promise was settled.</p>
+
+
+<h3 id="sec_creating-using-promises">
+<span class="section-number">25.5 </span>Creating and using Promises <a class="header-anchor" href="#sec_creating-using-promises" aria-hidden="true">#</a></h3>
+
+<p>Let&#x2019;s look at how Promises are operated from the producer and the consumer side.</p>
+
+<h4 id="_producing-a-promise">
+<span class="section-number">25.5.1 </span>Producing a Promise <a class="header-anchor" href="#_producing-a-promise" aria-hidden="true">#</a></h4>
+
+<p>As a producer, you create a Promise and send a result via it:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">p</code> <code class="o">=</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">(</code>
+    <code class="kd">function</code> <code class="p">(</code><code class="nx">resolve</code><code class="p">,</code> <code class="nx">reject</code><code class="p">)</code> <code class="p">{</code> <code class="c1">// (A)</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+        <code class="k">if</code> <code class="p">(</code><code class="err">&#xB7;&#xB7;&#xB7;</code><code class="p">)</code> <code class="p">{</code>
+            <code class="nx">resolve</code><code class="p">(</code><code class="nx">value</code><code class="p">);</code> <code class="c1">// success</code>
+        <code class="p">}</code> <code class="k">else</code> <code class="p">{</code>
+            <code class="nx">reject</code><code class="p">(</code><code class="nx">reason</code><code class="p">);</code> <code class="c1">// failure</code>
+        <code class="p">}</code>
+    <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_the-states-of-promises">
+<span class="section-number">25.5.2 </span>The states of Promises <a class="header-anchor" href="#_the-states-of-promises" aria-hidden="true">#</a></h4>
+
+<p>Once a result was delivered via a Promise, the Promise stays locked in to that result. That means each Promise is always in either one of three (mutually exclusive) states:</p>
+
+<ul>
+  <li>Pending: the result hasn&#x2019;t been computed, yet (the initial state of each Promise)</li>
+  <li>Fulfilled: the result was computed successfully</li>
+  <li>Rejected: a failure occurred during computation</li>
+</ul>
+
+<p>A Promise is <em>settled</em> (the computation it represents has finished) if it is either fulfilled or rejected. A Promise can only be settled once and then stays settled. Subsequent attempts to settle have no effect.</p>
+
+
+<figure class="image center" style="width: 264px;">
+  <img src="images/promises----promise_states_simple.jpg" alt="" style="width: 100%;" width="276" height="111.25">
+  <figcaption></figcaption>
+</figure>
+
+
+<p>The parameter of <code>new Promise()</code> (starting in line A) is called an <em>executor</em>:</p>
+
+<ul>
+  <li>Resolving: If the computation went well, the executor sends the result via <code>resolve()</code>. That usually fulfills the Promise <code>p</code>. But it may not &#x2013; resolving with a Promise <code>q</code> leads to <code>p</code> tracking <code>q</code>: If <code>q</code> is still pending then so is <code>p</code>. However <code>q</code> is settled, <code>p</code> will be settled the same way.</li>
+  <li>Rejecting: If an error happened, the executor notifies the Promise consumer via <code>reject()</code>. That always rejects the Promise.</li>
+</ul>
+
+<p>If an exception is thrown inside the executor, <code>p</code> is rejected with that exception.</p>
+
+<h4 id="_consuming-a-promise">
+<span class="section-number">25.5.3 </span>Consuming a Promise <a class="header-anchor" href="#_consuming-a-promise" aria-hidden="true">#</a></h4>
+
+<p>As a consumer of <code>promise</code>, you are notified of a fulfillment or a rejection via <em>reactions</em> &#x2013; callbacks that you register with the methods <code>then()</code> and <code>catch()</code>:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">promise</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">value</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="cm">/* fulfillment */</code> <code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">error</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="cm">/* rejection */</code> <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>What makes Promises so useful for asynchronous functions (with one-off results) is that once a Promise is settled, it doesn&#x2019;t change anymore. Furthermore, there are never any race conditions, because it doesn&#x2019;t matter whether you invoke <code>then()</code> or <code>catch()</code> before or after a Promise is settled:</p>
+
+<ul>
+  <li>Reactions that are registered with a Promise before it is settled, are notified of the settlement once it happens.</li>
+  <li>Reactions that are registered with a Promise after it is settled, receive the cached settled value &#x201C;immediately&#x201D; (their invocations are queued as tasks).</li>
+</ul>
+
+<p>Note that <code>catch()</code> is simply a more convenient (and recommended) alternative to calling <code>then()</code>. That is, the following two invocations are equivalent:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">promise</code><code class="p">.</code><code class="nx">then</code><code class="p">(</code>
+    <code class="kc">null</code><code class="p">,</code>
+    <code class="nx">error</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="cm">/* rejection */</code> <code class="p">});</code>
+
+<code class="nx">promise</code><code class="p">.</code><code class="k">catch</code><code class="p">(</code>
+    <code class="nx">error</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="cm">/* rejection */</code> <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_promises-are-always-asynchronous">
+<span class="section-number">25.5.4 </span>Promises are always asynchronous <a class="header-anchor" href="#_promises-are-always-asynchronous" aria-hidden="true">#</a></h4>
+
+<p>A Promise library has complete control over whether results are delivered to Promise reactions synchronously (right away) or asynchronously (after the current continuation, the current piece of code, is finished). However, the Promises/A+ specification demands that the latter mode of execution be always used. It states so via the following <a href="http://promisesaplus.com/#point-34">requirement</a> (2.2.4) for the <code>then()</code> method:</p>
+
+<blockquote>
+  <p><code>onFulfilled</code> or <code>onRejected</code> must not be called until the execution context stack contains only platform code.</p>
+</blockquote>
+
+<p>That means that your code can rely on run-to-completion semantics (as explained in <a href="ch_async.html#ch_async">the previous chapter</a>) and that chaining Promises won&#x2019;t starve other tasks of processing time.</p>
+
+<p>Additionally, this constraint prevents you from writing functions that sometimes return results immediately, sometimes asynchronously. This is an anti-pattern, because it makes code unpredictable. For more information, consult &#x201C;<a href="http://blog.izs.me/post/59142742143/designing-apis-for-asynchrony">Designing APIs for Asynchrony</a>&#x201D; by Isaac Z. Schlueter.</p>
+
+
+<h3 id="sec_examples-promises">
+<span class="section-number">25.6 </span>Examples <a class="header-anchor" href="#sec_examples-promises" aria-hidden="true">#</a></h3>
+
+<p>Before we dig deeper into Promises, let&#x2019;s use what we have learned so far in a few examples.</p>
+
+<aside class="generic_inbar blurb github-alt icon-github-alt">
+    <p>Some of the examples in this section are available in the GitHub repository <a href="https://github.com/rauschma/promise-examples"><code>promise-examples</code></a>.</p>
+
+</aside>
+
+<h4 id="readFilePromisified">
+<span class="section-number">25.6.1 </span>Example: promisifying <code>fs.readFile()</code>
+ <a class="header-anchor" href="#readFilePromisified" aria-hidden="true">#</a></h4>
+
+<p>The following code is a Promise-based version of the built-in Node.js function <a href="https://nodejs.org/api/fs.html#fs_fs_readfile_filename_options_callback"><code>fs.readFile()</code></a>.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">import</code> <code class="p">{</code><code class="nx">readFile</code><code class="p">}</code> <code class="nx">from</code> <code class="s1">&apos;fs&apos;</code><code class="p">;</code>
+
+<code class="kd">function</code> <code class="nx">readFilePromisified</code><code class="p">(</code><code class="nx">filename</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">(</code>
+        <code class="kd">function</code> <code class="p">(</code><code class="nx">resolve</code><code class="p">,</code> <code class="nx">reject</code><code class="p">)</code> <code class="p">{</code>
+            <code class="nx">readFile</code><code class="p">(</code><code class="nx">filename</code><code class="p">,</code> <code class="p">{</code> <code class="nx">encoding</code><code class="o">:</code> <code class="s1">&apos;utf8&apos;</code> <code class="p">},</code>
+                <code class="p">(</code><code class="nx">error</code><code class="p">,</code> <code class="nx">data</code><code class="p">)</code> <code class="p">=&gt;</code> <code class="p">{</code>
+                    <code class="k">if</code> <code class="p">(</code><code class="nx">error</code><code class="p">)</code> <code class="p">{</code>
+                        <code class="nx">reject</code><code class="p">(</code><code class="nx">error</code><code class="p">);</code>
+                    <code class="p">}</code> <code class="k">else</code> <code class="p">{</code>
+                        <code class="nx">resolve</code><code class="p">(</code><code class="nx">data</code><code class="p">);</code>
+                    <code class="p">}</code>
+                <code class="p">});</code>
+        <code class="p">});</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p><code>readFilePromisified()</code> is used like this:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">readFilePromisified</code><code class="p">(</code><code class="nx">process</code><code class="p">.</code><code class="nx">argv</code><code class="p">[</code><code class="mi">2</code><code class="p">])</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">text</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">text</code><code class="p">);</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">error</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">error</code><code class="p">);</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_example-promisifying-xmlhttprequest">
+<span class="section-number">25.6.2 </span>Example: promisifying <code>XMLHttpRequest</code>
+ <a class="header-anchor" href="#_example-promisifying-xmlhttprequest" aria-hidden="true">#</a></h4>
+
+<p>The following is a Promise-based function that performs an HTTP GET via the event-based <a href="https://xhr.spec.whatwg.org/">XMLHttpRequest</a> API:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">httpGet</code><code class="p">(</code><code class="nx">url</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">(</code>
+        <code class="kd">function</code> <code class="p">(</code><code class="nx">resolve</code><code class="p">,</code> <code class="nx">reject</code><code class="p">)</code> <code class="p">{</code>
+            <code class="kr">const</code> <code class="nx">request</code> <code class="o">=</code> <code class="k">new</code> <code class="nx">XMLHttpRequest</code><code class="p">();</code>
+            <code class="nx">request</code><code class="p">.</code><code class="nx">onload</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+                <code class="k">if</code> <code class="p">(</code><code class="k">this</code><code class="p">.</code><code class="nx">status</code> <code class="o">===</code> <code class="mi">200</code><code class="p">)</code> <code class="p">{</code>
+                    <code class="c1">// Success</code>
+                    <code class="nx">resolve</code><code class="p">(</code><code class="k">this</code><code class="p">.</code><code class="nx">response</code><code class="p">);</code>
+                <code class="p">}</code> <code class="k">else</code> <code class="p">{</code>
+                    <code class="c1">// Something went wrong (404 etc.)</code>
+                    <code class="nx">reject</code><code class="p">(</code><code class="k">new</code> <code class="nb">Error</code><code class="p">(</code><code class="k">this</code><code class="p">.</code><code class="nx">statusText</code><code class="p">));</code>
+                <code class="p">}</code>
+            <code class="p">};</code>
+            <code class="nx">request</code><code class="p">.</code><code class="nx">onerror</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+                <code class="nx">reject</code><code class="p">(</code><code class="k">new</code> <code class="nb">Error</code><code class="p">(</code>
+                    <code class="s1">&apos;XMLHttpRequest Error: &apos;</code><code class="o">+</code><code class="k">this</code><code class="p">.</code><code class="nx">statusText</code><code class="p">));</code>
+            <code class="p">};</code>
+            <code class="nx">request</code><code class="p">.</code><code class="nx">open</code><code class="p">(</code><code class="s1">&apos;GET&apos;</code><code class="p">,</code> <code class="nx">url</code><code class="p">);</code>
+            <code class="nx">request</code><code class="p">.</code><code class="nx">send</code><code class="p">();</code>
+        <code class="p">});</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>This is how you use <code>httpGet()</code>:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">httpGet</code><code class="p">(</code><code class="s1">&apos;http://example.com/file.txt&apos;</code><code class="p">)</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code>
+    <code class="kd">function</code> <code class="p">(</code><code class="nx">value</code><code class="p">)</code> <code class="p">{</code>
+        <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="s1">&apos;Contents: &apos;</code> <code class="o">+</code> <code class="nx">value</code><code class="p">);</code>
+    <code class="p">},</code>
+    <code class="kd">function</code> <code class="p">(</code><code class="nx">reason</code><code class="p">)</code> <code class="p">{</code>
+        <code class="nx">console</code><code class="p">.</code><code class="nx">error</code><code class="p">(</code><code class="s1">&apos;Something went wrong&apos;</code><code class="p">,</code> <code class="nx">reason</code><code class="p">);</code>
+    <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_example-delaying-an-activity">
+<span class="section-number">25.6.3 </span>Example: delaying an activity <a class="header-anchor" href="#_example-delaying-an-activity" aria-hidden="true">#</a></h4>
+
+<p>Let&#x2019;s implement <code>setTimeout()</code> as the Promise-based function <code>delay()</code> (similar to <a href="https://github.com/kriskowal/q/wiki/API-Reference#qdelayms"><code>Q.delay()</code></a>).</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">delay</code><code class="p">(</code><code class="nx">ms</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">resolve</code><code class="p">,</code> <code class="nx">reject</code><code class="p">)</code> <code class="p">{</code>
+        <code class="nx">setTimeout</code><code class="p">(</code><code class="nx">resolve</code><code class="p">,</code> <code class="nx">ms</code><code class="p">);</code> <code class="c1">// (A)</code>
+    <code class="p">});</code>
+<code class="p">}</code>
+
+<code class="c1">// Using delay():</code>
+<code class="nx">delay</code><code class="p">(</code><code class="mi">5000</code><code class="p">).</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">()</code> <code class="p">{</code> <code class="c1">// (B)</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="s1">&apos;5 seconds have passed!&apos;</code><code class="p">)</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>Note that in line A, we are calling <code>resolve</code> with zero parameters, which is the same as calling <code>resolve(undefined)</code>. We don&#x2019;t need the fulfillment value in line B, either and simply ignore it. Just being notified is enough here.</p>
+
+<h4 id="_example-timing-out-a-promise">
+<span class="section-number">25.6.4 </span>Example: timing out a Promise <a class="header-anchor" href="#_example-timing-out-a-promise" aria-hidden="true">#</a></h4>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">timeout</code><code class="p">(</code><code class="nx">ms</code><code class="p">,</code> <code class="nx">promise</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">resolve</code><code class="p">,</code> <code class="nx">reject</code><code class="p">)</code> <code class="p">{</code>
+        <code class="nx">promise</code><code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">resolve</code><code class="p">);</code>
+        <code class="nx">setTimeout</code><code class="p">(</code><code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+            <code class="nx">reject</code><code class="p">(</code><code class="k">new</code> <code class="nb">Error</code><code class="p">(</code><code class="s1">&apos;Timeout after &apos;</code><code class="o">+</code><code class="nx">ms</code><code class="o">+</code><code class="s1">&apos; ms&apos;</code><code class="p">));</code> <code class="c1">// (A)</code>
+        <code class="p">},</code> <code class="nx">ms</code><code class="p">);</code>
+    <code class="p">});</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>Note that the rejection after the timeout (in line A) does not cancel the request, but it does prevent the Promise being fulfilled with its result.</p>
+
+<p>Using <code>timeout()</code> looks like this:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">timeout</code><code class="p">(</code><code class="mi">5000</code><code class="p">,</code> <code class="nx">httpGet</code><code class="p">(</code><code class="s1">&apos;http://example.com/file.txt&apos;</code><code class="p">))</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value</code><code class="p">)</code> <code class="p">{</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="s1">&apos;Contents: &apos;</code> <code class="o">+</code> <code class="nx">value</code><code class="p">);</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">reason</code><code class="p">)</code> <code class="p">{</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">error</code><code class="p">(</code><code class="s1">&apos;Error or timeout&apos;</code><code class="p">,</code> <code class="nx">reason</code><code class="p">);</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+
+<h3 id="sec_other-ways-creating-promises">
+<span class="section-number">25.7 </span>Other ways of creating Promises <a class="header-anchor" href="#sec_other-ways-creating-promises" aria-hidden="true">#</a></h3>
+
+<p>Now we are ready to dig deeper into the features of Promises. Let&#x2019;s first explore two more ways of creating Promises.</p>
+
+<h4 id="_promiseresolve">
+<span class="section-number">25.7.1 </span><code>Promise.resolve()</code>
+ <a class="header-anchor" href="#_promiseresolve" aria-hidden="true">#</a></h4>
+
+<p><code>Promise.resolve(x)</code> works as follows:</p>
+
+<ul>
+  <li>For most values <code>x</code>, it returns a Promise that is fulfilled with <code>x</code>:
+    <figure class="code">
+<div class="highlight"><pre><code></code>  <code class="nb">Promise</code><code class="p">.</code><code class="nx">resolve</code><code class="p">(</code><code class="s1">&apos;abc&apos;</code><code class="p">)</code>
+  <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">x</code><code class="p">));</code> <code class="c1">// abc</code>
+</pre></div>
+
+    </figure>
+  </li>
+  <li>If <code>x</code> is a Promise whose constructor is the receiver (<code>Promise</code> if you call <code>Promise.resolve()</code>) then <code>x</code> is returned unchanged:
+    <figure class="code">
+<div class="highlight"><pre><code></code>  <code class="kr">const</code> <code class="nx">p</code> <code class="o">=</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="kc">null</code><code class="p">);</code>
+  <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nb">Promise</code><code class="p">.</code><code class="nx">resolve</code><code class="p">(</code><code class="nx">p</code><code class="p">)</code> <code class="o">===</code> <code class="nx">p</code><code class="p">);</code> <code class="c1">// true</code>
+</pre></div>
+
+    </figure>
+  </li>
+  <li>If <code>x</code> is a thenable, it is converted to a Promise: the settlement of the thenable will also become the settlement of the Promise. The following code demonstrates that. <code>fulfilledThenable</code> behaves roughly like a Promise that was fulfilled with the string <code>&apos;hello&apos;</code>. After converting it to the Promise <code>promise</code>, method <code>then()</code> works as expected (last line).
+    <figure class="code">
+<div class="highlight"><pre><code></code>  <code class="kr">const</code> <code class="nx">fulfilledThenable</code> <code class="o">=</code> <code class="p">{</code>
+      <code class="nx">then</code><code class="p">(</code><code class="nx">reaction</code><code class="p">)</code> <code class="p">{</code>
+          <code class="nx">reaction</code><code class="p">(</code><code class="s1">&apos;hello&apos;</code><code class="p">);</code>
+      <code class="p">}</code>
+  <code class="p">};</code>
+  <code class="kr">const</code> <code class="nx">promise</code> <code class="o">=</code> <code class="nb">Promise</code><code class="p">.</code><code class="nx">resolve</code><code class="p">(</code><code class="nx">fulfilledThenable</code><code class="p">);</code>
+  <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">promise</code> <code class="k">instanceof</code> <code class="nb">Promise</code><code class="p">);</code> <code class="c1">// true</code>
+  <code class="nx">promise</code><code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">x</code><code class="p">));</code> <code class="c1">// hello</code>
+</pre></div>
+
+    </figure>
+  </li>
+</ul>
+
+<p>That means that you can use <code>Promise.resolve()</code> to convert any value (Promise, thenable or other) to a Promise. In fact, it is used by <code>Promise.all()</code> and <code>Promise.race()</code> to convert Arrays of arbitrary values to Arrays of Promises.</p>
+
+<h4 id="_promisereject">
+<span class="section-number">25.7.2 </span><code>Promise.reject()</code>
+ <a class="header-anchor" href="#_promisereject" aria-hidden="true">#</a></h4>
+
+<p><code>Promise.reject(err)</code> returns a Promise that is rejected with <code>err</code>:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">myError</code> <code class="o">=</code> <code class="k">new</code> <code class="nb">Error</code><code class="p">(</code><code class="s1">&apos;Problem!&apos;</code><code class="p">);</code>
+<code class="nb">Promise</code><code class="p">.</code><code class="nx">reject</code><code class="p">(</code><code class="nx">myError</code><code class="p">)</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">err</code> <code class="p">=&gt;</code> <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">err</code> <code class="o">===</code> <code class="nx">myError</code><code class="p">));</code> <code class="c1">// true</code>
+</pre></div>
+
+</figure>
+
+
+<h3 id="sec_chaining-promises">
+<span class="section-number">25.8 </span>Chaining Promises <a class="header-anchor" href="#sec_chaining-promises" aria-hidden="true">#</a></h3>
+
+<p>In this section, we take a closer look at how Promises can be chained. The result of the method call:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">P</code><code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">onFulfilled</code><code class="p">,</code> <code class="nx">onRejected</code><code class="p">)</code>
+</pre></div>
+
+</figure>
+
+<p>is a new Promise Q. That means that you can keep the Promise-based control flow going by invoking <code>then()</code> on Q:</p>
+
+<ul>
+  <li>Q is resolved with what is returned by either <code>onFulfilled</code> or <code>onRejected</code>.</li>
+  <li>Q is rejected if either <code>onFulfilled</code> or <code>onRejected</code> throw an exception.</li>
+</ul>
+
+<h4 id="_resolving-q-with-a-normal-value">
+<span class="section-number">25.8.1 </span>Resolving Q with a normal value <a class="header-anchor" href="#_resolving-q-with-a-normal-value" aria-hidden="true">#</a></h4>
+
+<p>If you resolve the Promise Q returned by <code>then()</code> with a normal value, you can pick up that value via a subsequent <code>then()</code>:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value1</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="mi">123</code><code class="p">;</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value2</code><code class="p">)</code> <code class="p">{</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">value2</code><code class="p">);</code> <code class="c1">// 123</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_resolving-q-with-a-thenable">
+<span class="section-number">25.8.2 </span>Resolving Q with a thenable <a class="header-anchor" href="#_resolving-q-with-a-thenable" aria-hidden="true">#</a></h4>
+
+<p>You can also resolve the Promise Q returned by <code>then()</code> with a <em>thenable</em> R. A thenable is any object that has a method <code>then()</code> that works like <code>Promise.prototype.then()</code>. Thus, Promises are thenables. Resolving with R (e.g. by returning it from <code>onFulfilled</code>) means that it is inserted &#x201C;after&#x201D; Q: R&#x2019;s settlement is forwarded to Q&#x2019;s <code>onFulfilled</code> and <code>onRejected</code> callbacks. In a way, Q becomes R.</p>
+
+
+<figure class="image center" style="width: 451px;">
+  <img src="images/promises----resolve_with_thenable.jpg" alt="" style="width: 100%;" width="489.5" height="85.25">
+  <figcaption></figcaption>
+</figure>
+
+
+<p>The main use for this mechanism is to flatten nested <code>then()</code> calls, like in the following example:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc1</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value1</code><code class="p">)</code> <code class="p">{</code>
+    <code class="nx">asyncFunc2</code><code class="p">()</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value2</code><code class="p">)</code> <code class="p">{</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="p">});</code>
+<code class="p">})</code>
+</pre></div>
+
+</figure>
+
+<p>The flat version looks like this:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc1</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value1</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">asyncFunc2</code><code class="p">();</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value2</code><code class="p">)</code> <code class="p">{</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">})</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_resolving-q-from-onrejected">
+<span class="section-number">25.8.3 </span>Resolving Q from <code>onRejected</code>
+ <a class="header-anchor" href="#_resolving-q-from-onrejected" aria-hidden="true">#</a></h4>
+
+<p>Whatever you return in an error handler becomes a fulfillment value (not rejection value!). That allows you to specify default values that are used in case of failure:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">retrieveFileName</code><code class="p">()</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+    <code class="c1">// Something went wrong, use a default value</code>
+    <code class="k">return</code> <code class="s1">&apos;Untitled.txt&apos;</code><code class="p">;</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">fileName</code><code class="p">)</code> <code class="p">{</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_rejecting-q-by-throwing-an-exception">
+<span class="section-number">25.8.4 </span>Rejecting Q by throwing an exception <a class="header-anchor" href="#_rejecting-q-by-throwing-an-exception" aria-hidden="true">#</a></h4>
+
+<p>Exceptions that are thrown in the callbacks of <code>then()</code> and <code>catch()</code> are passed on to the next error handler, as rejections:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">throw</code> <code class="k">new</code> <code class="nb">Error</code><code class="p">();</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">reason</code><code class="p">)</code> <code class="p">{</code>
+    <code class="c1">// Handle error here</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_chaining-and-errors">
+<span class="section-number">25.8.5 </span>Chaining and errors <a class="header-anchor" href="#_chaining-and-errors" aria-hidden="true">#</a></h4>
+
+<p>There can be one or more <code>then()</code> method calls that don&#x2019;t have error handlers. Then the error is passed on until there is an error handler.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc1</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">asyncFunc2</code><code class="p">)</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">asyncFunc3</code><code class="p">)</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">reason</code><code class="p">)</code> <code class="p">{</code>
+    <code class="c1">// Something went wrong above</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+
+<h3 id="sec_common-promise-chaining-mistakes">
+<span class="section-number">25.9 </span>Common Promise chaining mistakes <a class="header-anchor" href="#sec_common-promise-chaining-mistakes" aria-hidden="true">#</a></h3>
+
+<h4 id="_mistake-losing-the-tail-of-a-promise-chain">
+<span class="section-number">25.9.1 </span>Mistake: losing the tail of a Promise chain <a class="header-anchor" href="#_mistake-losing-the-tail-of-a-promise-chain" aria-hidden="true">#</a></h4>
+
+<p>In the following code, a chain of two Promises is built, but only the first part of it is returned. As a consequence, the tail of the chain is lost.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="c1">// Don&#x2019;t do this</code>
+<code class="kd">function</code> <code class="nx">foo</code><code class="p">()</code> <code class="p">{</code>
+    <code class="kr">const</code> <code class="nx">promise</code> <code class="o">=</code> <code class="nx">asyncFunc</code><code class="p">();</code>
+    <code class="nx">promise</code><code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="p">});</code>
+
+    <code class="k">return</code> <code class="nx">promise</code><code class="p">;</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>This can be fixed by returning the tail of the chain:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">foo</code><code class="p">()</code> <code class="p">{</code>
+    <code class="kr">const</code> <code class="nx">promise</code> <code class="o">=</code> <code class="nx">asyncFunc</code><code class="p">();</code>
+    <code class="k">return</code> <code class="nx">promise</code><code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="p">});</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>If you don&#x2019;t need the variable <code>promise</code>, you can simplify this code further:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">foo</code><code class="p">()</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">asyncFunc</code><code class="p">()</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="p">});</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_mistake-nesting-promises">
+<span class="section-number">25.9.2 </span>Mistake: nesting Promises <a class="header-anchor" href="#_mistake-nesting-promises" aria-hidden="true">#</a></h4>
+
+<p>In the following code, the invocation of <code>asyncFunc2()</code> is nested:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="c1">// Don&#x2019;t do this</code>
+<code class="nx">asyncFunc1</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result1</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="nx">asyncFunc2</code><code class="p">()</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result2</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="p">});</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>The fix is to un-nest this code by returning the second Promise from the first <code>then()</code> and handling it via a second, chained, <code>then()</code>:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc1</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result1</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">asyncFunc2</code><code class="p">();</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result2</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_mistake-creating-promises-instead-of-chaining">
+<span class="section-number">25.9.3 </span>Mistake: creating Promises instead of chaining <a class="header-anchor" href="#_mistake-creating-promises-instead-of-chaining" aria-hidden="true">#</a></h4>
+
+<p>In the following code, method <code>insertInto()</code> creates a new Promise for its result (line A):</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="c1">// Don&#x2019;t do this</code>
+<code class="kr">class</code> <code class="nx">Model</code> <code class="p">{</code>
+    <code class="nx">insertInto</code><code class="p">(</code><code class="nx">db</code><code class="p">)</code> <code class="p">{</code>
+        <code class="k">return</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">((</code><code class="nx">resolve</code><code class="p">,</code> <code class="nx">reject</code><code class="p">)</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="c1">// (A)</code>
+          <code class="nx">db</code><code class="p">.</code><code class="nx">insert</code><code class="p">(</code><code class="k">this</code><code class="p">.</code><code class="nx">fields</code><code class="p">)</code> <code class="c1">// (B)</code>
+          <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">resultCode</code> <code class="p">=&gt;</code> <code class="p">{</code>
+              <code class="k">this</code><code class="p">.</code><code class="nx">notifyObservers</code><code class="p">({</code><code class="nx">event</code><code class="o">:</code> <code class="s1">&apos;created&apos;</code><code class="p">,</code> <code class="nx">model</code><code class="o">:</code> <code class="k">this</code><code class="p">});</code>
+              <code class="nx">resolve</code><code class="p">(</code><code class="nx">resultCode</code><code class="p">);</code> <code class="c1">// (C)</code>
+          <code class="p">}).</code><code class="k">catch</code><code class="p">(</code><code class="nx">err</code> <code class="p">=&gt;</code> <code class="p">{</code>
+              <code class="nx">reject</code><code class="p">(</code><code class="nx">err</code><code class="p">);</code> <code class="c1">// (D)</code>
+          <code class="p">})</code>
+        <code class="p">});</code>
+    <code class="p">}</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>If you look closely, you can see that the result Promise is mainly used to forward the fulfillment (line C) and the rejection (line D) of the asynchronous method call <code>db.insert()</code> (line B).</p>
+
+<p>The fix is to not create a Promise, by relying on <code>then()</code> and chaining:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">class</code> <code class="nx">Model</code> <code class="p">{</code>
+    <code class="nx">insertInto</code><code class="p">(</code><code class="nx">db</code><code class="p">)</code> <code class="p">{</code>
+        <code class="k">return</code> <code class="nx">db</code><code class="p">.</code><code class="nx">insert</code><code class="p">(</code><code class="k">this</code><code class="p">.</code><code class="nx">fields</code><code class="p">)</code> <code class="c1">// (A)</code>
+        <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">resultCode</code> <code class="p">=&gt;</code> <code class="p">{</code>
+            <code class="k">this</code><code class="p">.</code><code class="nx">notifyObservers</code><code class="p">({</code><code class="nx">event</code><code class="o">:</code> <code class="s1">&apos;created&apos;</code><code class="p">,</code> <code class="nx">model</code><code class="o">:</code> <code class="k">this</code><code class="p">});</code>
+            <code class="k">return</code> <code class="nx">resultCode</code><code class="p">;</code> <code class="c1">// (B)</code>
+        <code class="p">});</code>
+    <code class="p">}</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>Explanations:</p>
+
+<ul>
+  <li>We return <code>resultCode</code> (line B) and let <code>then()</code> create the Promise for us.</li>
+  <li>We return the Promise chain (line A) and <code>then()</code> will pass on any rejection produced by <code>db.insert()</code>.</li>
+</ul>
+
+<h4 id="_mistake-using-then-for-error-handling">
+<span class="section-number">25.9.4 </span>Mistake: using <code>then()</code> for error handling <a class="header-anchor" href="#_mistake-using-then-for-error-handling" aria-hidden="true">#</a></h4>
+
+<p>In principle, <code>catch(cb)</code> is an abbreviation for <code>then(null, cb)</code>. But using both parameters of <code>then()</code> at the same time can cause problems:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="c1">// Don&#x2019;t do this</code>
+<code class="nx">asyncFunc1</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code>
+    <code class="nx">value</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="c1">// (A)</code>
+        <code class="nx">doSomething</code><code class="p">();</code> <code class="c1">// (B)</code>
+        <code class="k">return</code> <code class="nx">asyncFunc2</code><code class="p">();</code> <code class="c1">// (C)</code>
+    <code class="p">},</code>
+    <code class="nx">error</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="c1">// (D)</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>The rejection callback (line D) receives all rejections of <code>asyncFunc1()</code>, but it does not receive rejections created by the fulfillment callback (line A). For example, the synchronous function call in line B may throw an exception or the asynchronous function call in line C may produce a rejection.</p>
+
+<p>Therefore, it is better to move the rejection callback to a chained <code>catch()</code>:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc1</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">value</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="nx">doSomething</code><code class="p">();</code>
+    <code class="k">return</code> <code class="nx">asyncFunc2</code><code class="p">();</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">error</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+
+<h3 id="sec_error-handling-promises">
+<span class="section-number">25.10 </span>Tips for error handling <a class="header-anchor" href="#sec_error-handling-promises" aria-hidden="true">#</a></h3>
+
+<h4 id="_operational-errors-versus-programmer-errors">
+<span class="section-number">25.10.1 </span>Operational errors versus programmer errors <a class="header-anchor" href="#_operational-errors-versus-programmer-errors" aria-hidden="true">#</a></h4>
+
+<p>In programs, there are two kinds of errors:</p>
+
+<ul>
+  <li>
+<em>Operational errors</em> happen when a correct program encounters an exceptional situation that requires deviating from the &#x201C;normal&#x201D; algorithm. For example, a storage device may run out of memory while the program is writing data to it. This kind of error is expected.</li>
+  <li>
+<em>Programmer errors</em> happen when code does something wrong. For example, a function may require a parameter to be a string, but receives a number. This kind of error is unexpected.</li>
+</ul>
+
+<h5 id="_operational-errors-dont-mix-rejections-and-exceptions">
+<span class="section-number">25.10.1.1 </span>Operational errors: don&#x2019;t mix rejections and exceptions <a class="header-anchor" href="#_operational-errors-dont-mix-rejections-and-exceptions" aria-hidden="true">#</a></h5>
+
+<p>For operational errors, each function should support exactly one way of signaling errors. For Promise-based functions that means not mixing rejections and exceptions, which is the same as saying that they shouldn&#x2019;t throw exceptions.</p>
+
+<h5 id="_programmer-errors-fail-quickly">
+<span class="section-number">25.10.1.2 </span>Programmer errors: fail quickly <a class="header-anchor" href="#_programmer-errors-fail-quickly" aria-hidden="true">#</a></h5>
+
+<p>For programmer errors, it can make sense to fail as quickly as possible, by throwing an exception:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">downloadFile</code><code class="p">(</code><code class="nx">url</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">if</code> <code class="p">(</code><code class="k">typeof</code> <code class="nx">url</code> <code class="o">!==</code> <code class="s1">&apos;string&apos;</code><code class="p">)</code> <code class="p">{</code>
+        <code class="k">throw</code> <code class="k">new</code> <code class="nb">Error</code><code class="p">(</code><code class="s1">&apos;Illegal argument: &apos;</code> <code class="o">+</code> <code class="nx">url</code><code class="p">);</code>
+    <code class="p">}</code>
+    <code class="k">return</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">(</code><code class="err">&#xB7;&#xB7;&#xB7;</code><code class="p">).</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>If you do this, you must make sure that your asynchronous code can handle exceptions. I find throwing exceptions acceptable for assertions and similar things that could, in theory, be checked statically (e.g. via a linter that analyzes the source code).</p>
+
+<h4 id="_handling-exceptions-in-promise-based-functions">
+<span class="section-number">25.10.2 </span>Handling exceptions in Promise-based functions <a class="header-anchor" href="#_handling-exceptions-in-promise-based-functions" aria-hidden="true">#</a></h4>
+
+<p>If exceptions are thrown inside the callbacks of <code>then()</code> and <code>catch()</code> then that&#x2019;s not a problem, because these two methods convert them to rejections.</p>
+
+<p>However, things are different if you start your async function by doing something synchronous:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">asyncFunc</code><code class="p">()</code> <code class="p">{</code>
+    <code class="nx">doSomethingSync</code><code class="p">();</code> <code class="c1">// (A)</code>
+    <code class="k">return</code> <code class="nx">doSomethingAsync</code><code class="p">()</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="p">});</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>If an exception is thrown in line A then the whole function throws an exception. There are two solutions to this problem.</p>
+
+<h5 id="_solution-1-returning-a-rejected-promise">
+<span class="section-number">25.10.2.1 </span>Solution 1: returning a rejected Promise <a class="header-anchor" href="#_solution-1-returning-a-rejected-promise" aria-hidden="true">#</a></h5>
+
+<p>You can catch exceptions and return them as rejected Promises:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">asyncFunc</code><code class="p">()</code> <code class="p">{</code>
+    <code class="k">try</code> <code class="p">{</code>
+        <code class="nx">doSomethingSync</code><code class="p">();</code>
+        <code class="k">return</code> <code class="nx">doSomethingAsync</code><code class="p">()</code>
+        <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result</code> <code class="p">=&gt;</code> <code class="p">{</code>
+            <code class="err">&#xB7;&#xB7;&#xB7;</code>
+        <code class="p">});</code>
+    <code class="p">}</code> <code class="k">catch</code> <code class="p">(</code><code class="nx">err</code><code class="p">)</code> <code class="p">{</code>
+        <code class="k">return</code> <code class="nb">Promise</code><code class="p">.</code><code class="nx">reject</code><code class="p">(</code><code class="nx">err</code><code class="p">);</code>
+    <code class="p">}</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<h5 id="_solution-2-executing-the-sync-code-inside-a-callback">
+<span class="section-number">25.10.2.2 </span>Solution 2: executing the sync code inside a callback <a class="header-anchor" href="#_solution-2-executing-the-sync-code-inside-a-callback" aria-hidden="true">#</a></h5>
+
+<p>You can also start a chain of <code>then()</code> method calls via <code>Promise.resolve()</code> and execute the synchronous code inside a callback:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">asyncFunc</code><code class="p">()</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nb">Promise</code><code class="p">.</code><code class="nx">resolve</code><code class="p">()</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="nx">doSomethingSync</code><code class="p">();</code>
+        <code class="k">return</code> <code class="nx">doSomethingAsync</code><code class="p">();</code>
+    <code class="p">})</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="p">});</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>An alternative is to start the Promise chain via the Promise constructor:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">asyncFunc</code><code class="p">()</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">((</code><code class="nx">resolve</code><code class="p">,</code> <code class="nx">reject</code><code class="p">)</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="nx">doSomethingSync</code><code class="p">();</code>
+        <code class="nx">resolve</code><code class="p">(</code><code class="nx">doSomethingAsync</code><code class="p">());</code>
+    <code class="p">})</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="p">});</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>This approach saves you a tick (the synchronous code is executed right away), but it makes your code less regular.</p>
+
+<h4 id="_further-reading-4">
+<span class="section-number">25.10.3 </span>Further reading <a class="header-anchor" href="#_further-reading-4" aria-hidden="true">#</a></h4>
+
+<p>Sources of this section:</p>
+
+<ul>
+  <li>Chaining:
+    <ul>
+      <li>&#x201C;<a href="http://taoofcode.net/promise-anti-patterns/">Promise Anti-patterns</a>&#x201D; on Tao of Code.</li>
+    </ul>
+  </li>
+  <li>Error handling:
+    <ul>
+      <li>&#x201C;<a href="https://www.joyent.com/developers/node/design/errors">Error Handling in Node.js</a>&#x201D; by Joyent</li>
+      <li>
+<a href="https://groups.google.com/d/topic/exploring-es6/vZDdN8dCx0w/discussion">A post by user M&#xF6;rre Noseshine</a> in the &#x201C;Exploring ES6&#x201D; Google Group</li>
+      <li>Feedback to <a href="https://twitter.com/rauschma/status/713371400686473216">a tweet</a> asking whether it is OK to throw exceptions from Promise-based functions.</li>
+    </ul>
+  </li>
+</ul>
+
+
+<h3 id="sec_composing-promises">
+<span class="section-number">25.11 </span>Composing Promises <a class="header-anchor" href="#sec_composing-promises" aria-hidden="true">#</a></h3>
+
+<p>Composing means creating new things out of existing pieces. We have already encountered sequential composition of Promises: Given two Promises P and Q, the following code produces a new Promise that executes Q after P is fulfilled.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">P</code><code class="p">.</code><code class="nx">then</code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="nx">Q</code><code class="p">)</code>
+</pre></div>
+
+</figure>
+
+<p>Note that this is similar to the semicolon for synchronous code: Sequential composition of the synchronous operations <code>f()</code> and <code>g()</code> looks as follows.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">f</code><code class="p">();</code> <code class="nx">g</code><code class="p">()</code>
+</pre></div>
+
+</figure>
+
+<p>This section describes additional ways of composing Promises.</p>
+
+<h4 id="_manually-forking-and-joining-computations">
+<span class="section-number">25.11.1 </span>Manually forking and joining computations <a class="header-anchor" href="#_manually-forking-and-joining-computations" aria-hidden="true">#</a></h4>
+
+<p>Let&#x2019;s assume you want to perform two asynchronous computations, <code>asyncFunc1()</code> and <code>asyncFunc2()</code> in parallel:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="c1">// Don&#x2019;t do this</code>
+<code class="nx">asyncFunc1</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result1</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="nx">handleSuccess</code><code class="p">({</code><code class="nx">result1</code><code class="p">});</code>
+<code class="p">});</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">handleError</code><code class="p">);</code>
+
+<code class="nx">asyncFunc2</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">result2</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="nx">handleSuccess</code><code class="p">({</code><code class="nx">result2</code><code class="p">});</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">handleError</code><code class="p">);</code>
+
+<code class="kr">const</code> <code class="nx">results</code> <code class="o">=</code> <code class="p">{};</code>
+<code class="kd">function</code> <code class="nx">handleSuccess</code><code class="p">(</code><code class="nx">props</code><code class="p">)</code> <code class="p">{</code>
+    <code class="nb">Object</code><code class="p">.</code><code class="nx">assign</code><code class="p">(</code><code class="nx">results</code><code class="p">,</code> <code class="nx">props</code><code class="p">);</code>
+    <code class="k">if</code> <code class="p">(</code><code class="nb">Object</code><code class="p">.</code><code class="nx">keys</code><code class="p">(</code><code class="nx">results</code><code class="p">).</code><code class="nx">length</code> <code class="o">===</code> <code class="mi">2</code><code class="p">)</code> <code class="p">{</code>
+        <code class="kr">const</code> <code class="p">{</code><code class="nx">result1</code><code class="p">,</code> <code class="nx">result2</code><code class="p">}</code> <code class="o">=</code> <code class="nx">results</code><code class="p">;</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="p">}</code>
+<code class="p">}</code>
+<code class="kd">let</code> <code class="nx">errorCounter</code> <code class="o">=</code> <code class="mi">0</code><code class="p">;</code>
+<code class="kd">function</code> <code class="nx">handleError</code><code class="p">(</code><code class="nx">err</code><code class="p">)</code> <code class="p">{</code>
+    <code class="nx">errorCounter</code><code class="o">++</code><code class="p">;</code>
+    <code class="k">if</code> <code class="p">(</code><code class="nx">errorCounter</code> <code class="o">===</code> <code class="mi">1</code><code class="p">)</code> <code class="p">{</code>
+        <code class="c1">// One error means that everything failed,</code>
+        <code class="c1">// only react to first error</code>
+        <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="p">}</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>The two function calls <code>asyncFunc1()</code> and <code>asyncFunc2()</code> are made without <code>then()</code> chaining. As a consequence, they are both executed immediately and more or less in parallel. Execution is now forked; each function call spawned a separate &#x201C;thread&#x201D;. Once both threads are finished (with a result or an error), execution is joined into a single thread in either <code>handleSuccess()</code> or <code>handleError()</code>.</p>
+
+<p>The problem with this approach is that it involves too much manual and error-prone work. The fix is to not do this yourself, by relying on the built-in method <code>Promise.all()</code>.</p>
+
+<h4 id="_forking-and-joining-computations-via-promiseall">
+<span class="section-number">25.11.2 </span>Forking and joining computations via <code>Promise.all()</code>
+ <a class="header-anchor" href="#_forking-and-joining-computations-via-promiseall" aria-hidden="true">#</a></h4>
+
+<p><code>Promise.all(iterable)</code> takes an iterable over Promises (thenables and other values are converted to Promises via <code>Promise.resolve()</code>). Once all of them are fulfilled, it fulfills with an Array of their values. If <code>iterable</code> is empty, the Promise returned by <code>all()</code> is fulfilled immediately.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nb">Promise</code><code class="p">.</code><code class="nx">all</code><code class="p">([</code>
+    <code class="nx">asyncFunc1</code><code class="p">(),</code>
+    <code class="nx">asyncFunc2</code><code class="p">(),</code>
+<code class="p">])</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(([</code><code class="nx">result1</code><code class="p">,</code> <code class="nx">result2</code><code class="p">])</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">err</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="c1">// Receives first rejection among the Promises</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_map-via-promiseall">
+<span class="section-number">25.11.3 </span><code>map()</code> via <code>Promise.all()</code>
+ <a class="header-anchor" href="#_map-via-promiseall" aria-hidden="true">#</a></h4>
+
+<p>One nice thing about Promises is that many synchronous tools still work, because Promise-based functions return results. For example, you can use the Array method <code>map()</code>:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">fileUrls</code> <code class="o">=</code> <code class="p">[</code>
+    <code class="s1">&apos;http://example.com/file1.txt&apos;</code><code class="p">,</code>
+    <code class="s1">&apos;http://example.com/file2.txt&apos;</code><code class="p">,</code>
+<code class="p">];</code>
+<code class="kr">const</code> <code class="nx">promisedTexts</code> <code class="o">=</code> <code class="nx">fileUrls</code><code class="p">.</code><code class="nx">map</code><code class="p">(</code><code class="nx">httpGet</code><code class="p">);</code>
+</pre></div>
+
+</figure>
+
+<p><code>promisedTexts</code> is an Array of Promises. We can use <code>Promise.all()</code>, which we have already encountered in the previous section, to convert that Array to a Promise that fulfills with an Array of results.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nb">Promise</code><code class="p">.</code><code class="nx">all</code><code class="p">(</code><code class="nx">promisedTexts</code><code class="p">)</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">texts</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="k">for</code> <code class="p">(</code><code class="kr">const</code> <code class="nx">text</code> <code class="k">of</code> <code class="nx">texts</code><code class="p">)</code> <code class="p">{</code>
+        <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">text</code><code class="p">);</code>
+    <code class="p">}</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">reason</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="c1">// Receives first rejection among the Promises</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_timing-out-via-promiserace">
+<span class="section-number">25.11.4 </span>Timing out via <code>Promise.race()</code>
+ <a class="header-anchor" href="#_timing-out-via-promiserace" aria-hidden="true">#</a></h4>
+
+<p><code>Promise.race(iterable)</code> takes an iterable over Promises (thenables and other values are converted to Promises via <code>Promise.resolve()</code>) and returns a Promise P. The first of the input Promises that is settled passes its settlement on to the output Promise. If <code>iterable</code> is empty then the Promise returned by <code>race()</code> is never settled.</p>
+
+<p>As an example, let&#x2019;s use <code>Promise.race()</code> to implement a timeout:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nb">Promise</code><code class="p">.</code><code class="nx">race</code><code class="p">([</code>
+    <code class="nx">httpGet</code><code class="p">(</code><code class="s1">&apos;http://example.com/file.txt&apos;</code><code class="p">),</code>
+    <code class="nx">delay</code><code class="p">(</code><code class="mi">5000</code><code class="p">).</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+        <code class="k">throw</code> <code class="k">new</code> <code class="nb">Error</code><code class="p">(</code><code class="s1">&apos;Timed out&apos;</code><code class="p">)</code>
+    <code class="p">});</code>
+<code class="p">])</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">text</code><code class="p">)</code> <code class="p">{</code> <code class="err">&#xB7;&#xB7;&#xB7;</code> <code class="p">})</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">reason</code><code class="p">)</code> <code class="p">{</code> <code class="err">&#xB7;&#xB7;&#xB7;</code> <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+
+<h3 id="sec_additional-promise-methods">
+<span class="section-number">25.12 </span>Two useful additional Promise methods <a class="header-anchor" href="#sec_additional-promise-methods" aria-hidden="true">#</a></h3>
+
+<p>This section describes two useful methods for Promises that many Promise libraries provide. They are only shown to further demonstrate Promises, you should not add them to <code>Promise.prototype</code> (this kind of patching should only be done by polyfills).</p>
+
+<h4 id="_done">
+<span class="section-number">25.12.1 </span><code>done()</code>
+ <a class="header-anchor" href="#_done" aria-hidden="true">#</a></h4>
+
+<p>When you chain several Promise method calls, you risk silently discarding errors. For example:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">doSomething</code><code class="p">()</code> <code class="p">{</code>
+    <code class="nx">asyncFunc</code><code class="p">()</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">f1</code><code class="p">)</code>
+    <code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">r1</code><code class="p">)</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">f2</code><code class="p">);</code> <code class="c1">// (A)</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>If <code>then()</code> in line A produces a rejection, it will never be handled anywhere. The Promise library Q provides a method <code>done()</code>, to be used as the last element in a chain of method calls. It either replaces the last <code>then()</code> (and has one to two arguments):</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">doSomething</code><code class="p">()</code> <code class="p">{</code>
+    <code class="nx">asyncFunc</code><code class="p">()</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">f1</code><code class="p">)</code>
+    <code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">r1</code><code class="p">)</code>
+    <code class="p">.</code><code class="nx">done</code><code class="p">(</code><code class="nx">f2</code><code class="p">);</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>Or it is inserted after the last <code>then()</code> (and has zero arguments):</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">doSomething</code><code class="p">()</code> <code class="p">{</code>
+    <code class="nx">asyncFunc</code><code class="p">()</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">f1</code><code class="p">)</code>
+    <code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">r1</code><code class="p">)</code>
+    <code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">f2</code><code class="p">)</code>
+    <code class="p">.</code><code class="nx">done</code><code class="p">();</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>Quoting the <a href="https://github.com/kriskowal/q/wiki/API-Reference#promisedoneonfulfilled-onrejected-onprogress">Q documentation</a>:</p>
+
+<blockquote>
+  <p>The Golden Rule of <code>done</code> versus <code>then</code> usage is: either return your promise to someone else, or if the chain ends with you, call <code>done</code> to terminate it. Terminating with <code>catch</code> is not sufficient because the catch handler may itself throw an error.</p>
+</blockquote>
+
+<p>This is how you would implement <code>done()</code> in ECMAScript 6:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nb">Promise</code><code class="p">.</code><code class="nx">prototype</code><code class="p">.</code><code class="nx">done</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">(</code><code class="nx">onFulfilled</code><code class="p">,</code> <code class="nx">onRejected</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">onFulfilled</code><code class="p">,</code> <code class="nx">onRejected</code><code class="p">)</code>
+    <code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">reason</code><code class="p">)</code> <code class="p">{</code>
+        <code class="c1">// Throw an exception globally</code>
+        <code class="nx">setTimeout</code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="k">throw</code> <code class="nx">reason</code> <code class="p">},</code> <code class="mi">0</code><code class="p">);</code>
+    <code class="p">});</code>
+<code class="p">};</code>
+</pre></div>
+
+</figure>
+
+<p>While <code>done</code>&#x2019;s functionality is clearly useful, it has not been added to ECMAScript 6. The idea was to first explore how much engines can detect automatically. Depending on how well that works, it may to be necessary to introduce <code>done()</code>.</p>
+
+<h4 id="_finally">
+<span class="section-number">25.12.2 </span><code>finally()</code>
+ <a class="header-anchor" href="#_finally" aria-hidden="true">#</a></h4>
+
+<p>Sometimes you want to perform an action independently of whether an error happened or not. For example, to clean up after you are done with a resource. That&#x2019;s what the Promise method <code>finally()</code> is for, which works much like the <code>finally</code> clause in exception handling. Its callback receives no arguments, but is notified of either a resolution or a rejection.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">createResource</code><code class="p">(</code><code class="err">&#xB7;&#xB7;&#xB7;</code><code class="p">)</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value1</code><code class="p">)</code> <code class="p">{</code>
+    <code class="c1">// Use resource</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value2</code><code class="p">)</code> <code class="p">{</code>
+    <code class="c1">// Use resource</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">finally</code><code class="p">(</code><code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+    <code class="c1">// Clean up</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>This is how <code>Domenic Denicola</code> <a href="https://github.com/domenic/promises-unwrapping/issues/18">proposes</a> to implement <code>finally()</code>:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nb">Promise</code><code class="p">.</code><code class="nx">prototype</code><code class="p">.</code><code class="k">finally</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">(</code><code class="nx">callback</code><code class="p">)</code> <code class="p">{</code>
+    <code class="kr">const</code> <code class="nx">P</code> <code class="o">=</code> <code class="k">this</code><code class="p">.</code><code class="nx">constructor</code><code class="p">;</code>
+    <code class="c1">// We don&#x2019;t invoke the callback in here,</code>
+    <code class="c1">// because we want then() to handle its exceptions</code>
+    <code class="k">return</code> <code class="k">this</code><code class="p">.</code><code class="nx">then</code><code class="p">(</code>
+        <code class="c1">// Callback fulfills =&gt; continue with receiver&#x2019;s fulfillment or rejec\</code>
+<code class="nx">tion</code>
+        <code class="c1">// Callback rejects =&gt; pass on that rejection (then() has no 2nd para\</code>
+<code class="nx">meter</code><code class="o">!</code><code class="p">)</code>
+        <code class="nx">value</code>  <code class="p">=&gt;</code> <code class="nx">P</code><code class="p">.</code><code class="nx">resolve</code><code class="p">(</code><code class="nx">callback</code><code class="p">()).</code><code class="nx">then</code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="nx">value</code><code class="p">),</code>
+        <code class="nx">reason</code> <code class="p">=&gt;</code> <code class="nx">P</code><code class="p">.</code><code class="nx">resolve</code><code class="p">(</code><code class="nx">callback</code><code class="p">()).</code><code class="nx">then</code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="k">throw</code> <code class="nx">reason</code> <code class="p">})</code>
+    <code class="p">);</code>
+<code class="p">};</code>
+</pre></div>
+
+</figure>
+
+<p>The callback determines how the settlement of the receiver (<code>this</code>) is handled:</p>
+
+<ul>
+  <li>If the callback throws an exception or returns a rejected Promise then that becomes/contributes the rejection value.</li>
+  <li>Otherwise, the settlement (fulfillment or rejection) of the receiver becomes the settlement of the Promise returned by <code>finally()</code>. In a way, we take <code>finally()</code> out of the chain of methods.</li>
+</ul>
+
+<p><strong>Example 1</strong> (by <a href="https://gist.github.com/jakearchibald/785f79b0dea5bfe0c448">Jake Archibald</a>): using <code>finally()</code> to hide a spinner. Simplified version:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">showSpinner</code><code class="p">();</code>
+<code class="nx">fetchGalleryData</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">data</code> <code class="p">=&gt;</code> <code class="nx">updateGallery</code><code class="p">(</code><code class="nx">data</code><code class="p">))</code>
+<code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">showNoDataError</code><code class="p">)</code>
+<code class="p">.</code><code class="k">finally</code><code class="p">(</code><code class="nx">hideSpinner</code><code class="p">);</code>
+</pre></div>
+
+</figure>
+
+<p><strong>Example 2</strong> (by <a href="https://github.com/domenic/promises-unwrapping/issues/18#issuecomment-27707922">Kris Kowal</a>): using <code>finally()</code> to tear down a test.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">HTTP</code> <code class="o">=</code> <code class="nx">require</code><code class="p">(</code><code class="s2">&quot;q-io/http&quot;</code><code class="p">);</code>
+<code class="kr">const</code> <code class="nx">server</code> <code class="o">=</code> <code class="nx">HTTP</code><code class="p">.</code><code class="nx">Server</code><code class="p">(</code><code class="nx">app</code><code class="p">);</code>
+<code class="k">return</code> <code class="nx">server</code><code class="p">.</code><code class="nx">listen</code><code class="p">(</code><code class="mi">0</code><code class="p">)</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+    <code class="c1">// run test</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="k">finally</code><code class="p">(</code><code class="nx">server</code><code class="p">.</code><code class="nx">stop</code><code class="p">);</code>
+</pre></div>
+
+</figure>
+
+
+<h3 id="sec_nodejs-callbacks-promises">
+<span class="section-number">25.13 </span>Node.js: using callback-based sync functions with Promises <a class="header-anchor" href="#sec_nodejs-callbacks-promises" aria-hidden="true">#</a></h3>
+
+<p>The Promise library Q has <a href="https://github.com/kriskowal/q/wiki/API-Reference#interfacing-with-nodejs-callbacks">tool functions</a> for interfacing with Node.js-style <code>(err, result)</code> callback APIs. For example, <code>denodeify</code> converts a callback-based function to a Promise-based one:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">readFile</code> <code class="o">=</code> <code class="nx">Q</code><code class="p">.</code><code class="nx">denodeify</code><code class="p">(</code><code class="nx">FS</code><code class="p">.</code><code class="nx">readFile</code><code class="p">);</code>
+
+<code class="nx">readFile</code><code class="p">(</code><code class="s1">&apos;foo.txt&apos;</code><code class="p">,</code> <code class="s1">&apos;utf-8&apos;</code><code class="p">)</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">text</code><code class="p">)</code> <code class="p">{</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p><a href="https://github.com/matthew-andrews/denodeify/">denodify</a> is a micro-library that only provides the functionality of <code>Q.denodeify()</code> and complies with the ECMAScript 6 Promise API.</p>
+
+
+<h3 id="sec_es6-compatible-promise-libraries">
+<span class="section-number">25.14 </span>ES6-compatible Promise libraries <a class="header-anchor" href="#sec_es6-compatible-promise-libraries" aria-hidden="true">#</a></h3>
+
+<p>There are many Promise libraries out there. The following ones conform to the ECMAScript 6 API, which means that you can use them now and easily migrate to native ES6 later.</p>
+
+<p>Minimal polyfills:</p>
+
+<ul>
+  <li>&#x201C;<a href="https://github.com/jakearchibald/es6-promise">ES6-Promises</a>&#x201D; by Jake Archibald extracts just the ES6 API out of RSVP.js.</li>
+  <li>&#x201C;<a href="https://github.com/getify/native-promise-only">Native Promise Only (NPO)</a>&#x201D; by Kyle Simpson is &#x201C;a polyfill for native ES6 promises, as close as possible (no extensions) to the strict spec definitions&#x201D;.</li>
+  <li>&#x201C;<a href="https://github.com/calvinmetcalf/lie">Lie</a>&#x201D; by Calvin Metcalf is &#x201C;a small, performant, promise library implementing the Promises/A+ spec&#x201D;.</li>
+</ul>
+
+<p>Larger Promise libraries:</p>
+
+<ul>
+  <li>&#x201C;<a href="https://github.com/tildeio/rsvp.js/">RSVP.js</a>&#x201D; by Stefan Penner is a superset of the ES6 Promise API.</li>
+  <li>&#x201C;<a href="https://github.com/petkaantonov/bluebird">Bluebird</a>&#x201D; by Petka Antonov is a popular Promises library that passes the ES2015 tests (Test262) and is thus an alternative to ES6 Promises.</li>
+  <li>
+<a href="https://github.com/kriskowal/q#using-qpromise"><code>Q.Promise</code></a> by Kris Kowal implements the ES6 API.</li>
+</ul>
+
+<p>ES6 standard library polyfills:</p>
+
+<ul>
+  <li>&#x201C;<a href="https://github.com/paulmillr/es6-shim">ES6 Shim</a>&#x201D; by Paul Millr includes <code>Promise</code>.</li>
+  <li>&#x201C;<a href="https://github.com/zloirock/core-js">core-js</a>&#x201D; by Denis Pushkarev, the ES6+ polyfill used by Babel, includes <code>Promise</code>.</li>
+</ul>
+
+
+<h3 id="sec_promises-via-generators">
+<span class="section-number">25.15 </span>Next step: using Promises via generators <a class="header-anchor" href="#sec_promises-via-generators" aria-hidden="true">#</a></h3>
+
+<p>Implementing asynchronous functions via Promises is more convenient than via events or callbacks, but it&#x2019;s still not ideal:</p>
+
+<ul>
+  <li>Asynchronous code and synchronous code work completely differently. As a consequence, mixing those execution styles and switching between them for a function or method is cumbersome.</li>
+  <li>Conceptually, invoking an asynchronous function is a blocking call: The code making the call is suspended during the asynchronous computation and resumed once the result is in. However, the code does not reflect this as much as it could.</li>
+</ul>
+
+<p>The solution is to bring blocking calls to JavaScript. Generators let us do that, via libraries: In the following code, I use <a href="https://github.com/tj/co">the control flow library co</a> to asynchronously retrieve two JSON files.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">co</code><code class="p">(</code><code class="kd">function</code><code class="o">*</code> <code class="p">()</code> <code class="p">{</code>
+    <code class="k">try</code> <code class="p">{</code>
+        <code class="kr">const</code> <code class="p">[</code><code class="nx">croftStr</code><code class="p">,</code> <code class="nx">bondStr</code><code class="p">]</code> <code class="o">=</code> <code class="k">yield</code> <code class="nb">Promise</code><code class="p">.</code><code class="nx">all</code><code class="p">([</code>  <code class="c1">// (A)</code>
+            <code class="nx">getFile</code><code class="p">(</code><code class="s1">&apos;http://localhost:8000/croft.json&apos;</code><code class="p">),</code>
+            <code class="nx">getFile</code><code class="p">(</code><code class="s1">&apos;http://localhost:8000/bond.json&apos;</code><code class="p">),</code>
+        <code class="p">]);</code>
+        <code class="kr">const</code> <code class="nx">croftJson</code> <code class="o">=</code> <code class="nx">JSON</code><code class="p">.</code><code class="nx">parse</code><code class="p">(</code><code class="nx">croftStr</code><code class="p">);</code>
+        <code class="kr">const</code> <code class="nx">bondJson</code> <code class="o">=</code> <code class="nx">JSON</code><code class="p">.</code><code class="nx">parse</code><code class="p">(</code><code class="nx">bondStr</code><code class="p">);</code>
+
+        <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">croftJson</code><code class="p">);</code>
+        <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">bondJson</code><code class="p">);</code>
+    <code class="p">}</code> <code class="k">catch</code> <code class="p">(</code><code class="nx">e</code><code class="p">)</code> <code class="p">{</code>
+        <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="s1">&apos;Failure to read: &apos;</code> <code class="o">+</code> <code class="nx">e</code><code class="p">);</code>
+    <code class="p">}</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>In line A, execution blocks (waits) via <code>yield</code> until the result of <code>Promise.all()</code> is ready. That means that the code looks synchronous while performing asynchronous operations.</p>
+
+<p>Details are explained in <a href="ch_generators.html#sec_co-library">the chapter on generators</a>.</p>
+
+
+<h3 id="sec_demo-promise">
+<span class="section-number">25.16 </span>Promises in depth: a simple implementation <a class="header-anchor" href="#sec_demo-promise" aria-hidden="true">#</a></h3>
+
+<p>In this section, we will approach Promises from a different angle: Instead of learning how to use the API, we will look at a simple implementation of it. This different angle helped me greatly with making sense of Promises.</p>
+
+<p>The Promise implementation is called <code>DemoPromise</code>. In order to be easier to understand, it doesn&#x2019;t completely match the API. But it is close enough to still give you much insight into the challenges that actual implementations face.</p>
+
+<aside class="generic_inbar blurb github-alt icon-github-alt">
+    <p><code>DemoPromise</code> is available on GitHub, in the repository <a href="https://github.com/rauschma/demo_promise"><code>demo_promise</code></a>.</p>
+
+</aside>
+
+<p><code>DemoPromise</code> is a class with three prototype methods:</p>
+
+<ul>
+  <li><code>DemoPromise.prototype.resolve(value)</code></li>
+  <li><code>DemoPromise.prototype.reject(reason)</code></li>
+  <li><code>DemoPromise.prototype.then(onFulfilled, onRejected)</code></li>
+</ul>
+
+<p>That is, <code>resolve</code> and <code>reject</code> are methods (versus functions handed to a callback parameter of the constructor).</p>
+
+<h4 id="_a-stand-alone-promise">
+<span class="section-number">25.16.1 </span>A stand-alone Promise <a class="header-anchor" href="#_a-stand-alone-promise" aria-hidden="true">#</a></h4>
+
+<p>Our first implementation is a stand-alone Promise with minimal functionality:</p>
+
+<ul>
+  <li>You can create a Promise.</li>
+  <li>You can resolve or reject a Promise and you can only do it once.</li>
+  <li>You can register <em>reactions</em> (callbacks) via <code>then()</code>. It must work independently of whether the Promise has already been settled or not.
+    <ul>
+      <li>This method does not support chaining, yet &#x2013; it does not return anything.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>This is how this first implementation is used:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">dp</code> <code class="o">=</code> <code class="k">new</code> <code class="nx">DemoPromise</code><code class="p">();</code>
+<code class="nx">dp</code><code class="p">.</code><code class="nx">resolve</code><code class="p">(</code><code class="s1">&apos;abc&apos;</code><code class="p">);</code>
+<code class="nx">dp</code><code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value</code><code class="p">)</code> <code class="p">{</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">value</code><code class="p">);</code> <code class="c1">// abc</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>The following diagram illustrates how our first <code>DemoPromise</code> works:</p>
+
+
+<figure class="image center" style="width: 242px;">
+  <img src="images/promises----promise1_simple.jpg" alt="" style="width: 100%;" width="253" height="145.75">
+  <figcaption></figcaption>
+</figure>
+
+
+<h5 id="_demopromiseprototypethen">
+<span class="section-number">25.16.1.1 </span><code>DemoPromise.prototype.then()</code>
+ <a class="header-anchor" href="#_demopromiseprototypethen" aria-hidden="true">#</a></h5>
+
+<p>Let&#x2019;s examine <code>then()</code> first. It has to handle two cases:</p>
+
+<ul>
+  <li>If the Promise is still pending, it queues invocations of <code>onFulfilled</code> and <code>onRejected</code>, to be used when the Promise is settled.</li>
+  <li>If the Promise is already fulfilled or rejected, <code>onFulfilled</code> or <code>onRejected</code> can be invoked right away.</li>
+</ul>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">then</code><code class="p">(</code><code class="nx">onFulfilled</code><code class="p">,</code> <code class="nx">onRejected</code><code class="p">)</code> <code class="p">{</code>
+    <code class="kr">const</code> <code class="nx">self</code> <code class="o">=</code> <code class="k">this</code><code class="p">;</code>
+    <code class="kr">const</code> <code class="nx">fulfilledTask</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+        <code class="nx">onFulfilled</code><code class="p">(</code><code class="nx">self</code><code class="p">.</code><code class="nx">promiseResult</code><code class="p">);</code>
+    <code class="p">};</code>
+    <code class="kr">const</code> <code class="nx">rejectedTask</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+        <code class="nx">onRejected</code><code class="p">(</code><code class="nx">self</code><code class="p">.</code><code class="nx">promiseResult</code><code class="p">);</code>
+    <code class="p">};</code>
+    <code class="k">switch</code> <code class="p">(</code><code class="k">this</code><code class="p">.</code><code class="nx">promiseState</code><code class="p">)</code> <code class="p">{</code>
+        <code class="k">case</code> <code class="s1">&apos;pending&apos;</code><code class="o">:</code>
+            <code class="k">this</code><code class="p">.</code><code class="nx">fulfillReactions</code><code class="p">.</code><code class="nx">push</code><code class="p">(</code><code class="nx">fulfilledTask</code><code class="p">);</code>
+            <code class="k">this</code><code class="p">.</code><code class="nx">rejectReactions</code><code class="p">.</code><code class="nx">push</code><code class="p">(</code><code class="nx">rejectedTask</code><code class="p">);</code>
+            <code class="k">break</code><code class="p">;</code>
+        <code class="k">case</code> <code class="s1">&apos;fulfilled&apos;</code><code class="o">:</code>
+            <code class="nx">addToTaskQueue</code><code class="p">(</code><code class="nx">fulfilledTask</code><code class="p">);</code>
+            <code class="k">break</code><code class="p">;</code>
+        <code class="k">case</code> <code class="s1">&apos;rejected&apos;</code><code class="o">:</code>
+            <code class="nx">addToTaskQueue</code><code class="p">(</code><code class="nx">rejectedTask</code><code class="p">);</code>
+            <code class="k">break</code><code class="p">;</code>
+    <code class="p">}</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>The previous code snippet uses the following helper function:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">addToTaskQueue</code><code class="p">(</code><code class="nx">task</code><code class="p">)</code> <code class="p">{</code>
+    <code class="nx">setTimeout</code><code class="p">(</code><code class="nx">task</code><code class="p">,</code> <code class="mi">0</code><code class="p">);</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<h5 id="_demopromiseprototyperesolve">
+<span class="section-number">25.16.1.2 </span><code>DemoPromise.prototype.resolve()</code>
+ <a class="header-anchor" href="#_demopromiseprototyperesolve" aria-hidden="true">#</a></h5>
+
+<p><code>resolve()</code> works as follows: If the Promise is already settled, it does nothing (ensuring that a Promise can only be settled once). Otherwise, the state of the Promise changes to <code>&apos;fulfilled&apos;</code> and the result is cached in <code>this.promiseResult</code>. Next, all fulfillment reactions, that have been enqueued so far, are be triggered.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">resolve</code><code class="p">(</code><code class="nx">value</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">if</code> <code class="p">(</code><code class="k">this</code><code class="p">.</code><code class="nx">promiseState</code> <code class="o">!==</code> <code class="s1">&apos;pending&apos;</code><code class="p">)</code> <code class="k">return</code><code class="p">;</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">promiseState</code> <code class="o">=</code> <code class="s1">&apos;fulfilled&apos;</code><code class="p">;</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">promiseResult</code> <code class="o">=</code> <code class="nx">value</code><code class="p">;</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">_clearAndEnqueueReactions</code><code class="p">(</code><code class="k">this</code><code class="p">.</code><code class="nx">fulfillReactions</code><code class="p">);</code>
+    <code class="k">return</code> <code class="k">this</code><code class="p">;</code> <code class="c1">// enable chaining</code>
+<code class="p">}</code>
+<code class="nx">_clearAndEnqueueReactions</code><code class="p">(</code><code class="nx">reactions</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">fulfillReactions</code> <code class="o">=</code> <code class="kc">undefined</code><code class="p">;</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">rejectReactions</code> <code class="o">=</code> <code class="kc">undefined</code><code class="p">;</code>
+    <code class="nx">reactions</code><code class="p">.</code><code class="nx">map</code><code class="p">(</code><code class="nx">addToTaskQueue</code><code class="p">);</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p><code>reject()</code> is similar to <code>resolve()</code>.</p>
+
+<h4 id="_chaining">
+<span class="section-number">25.16.2 </span>Chaining <a class="header-anchor" href="#_chaining" aria-hidden="true">#</a></h4>
+
+<p>The next feature we implement is chaining:</p>
+
+<ul>
+  <li>
+<code>then()</code> returns a Promise that is resolved with what either <code>onFulfilled</code> or <code>onRejected</code> return.</li>
+  <li>If <code>onFulfilled</code> or <code>onRejected</code> are missing, whatever they would have received is passed on to the Promise returned by <code>then()</code>.</li>
+</ul>
+
+
+<figure class="image center" style="width: 408px;">
+  <img src="images/promises----promise2_chaining.jpg" alt="" style="width: 100%;" width="426" height="177">
+  <figcaption></figcaption>
+</figure>
+
+
+<p>Obviously, only <code>then()</code> changes:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">then</code><code class="p">(</code><code class="nx">onFulfilled</code><code class="p">,</code> <code class="nx">onRejected</code><code class="p">)</code> <code class="p">{</code>
+    <code class="kr">const</code> <code class="nx">returnValue</code> <code class="o">=</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">();</code> <code class="c1">// (A)</code>
+    <code class="kr">const</code> <code class="nx">self</code> <code class="o">=</code> <code class="k">this</code><code class="p">;</code>
+
+    <code class="kd">let</code> <code class="nx">fulfilledTask</code><code class="p">;</code>
+    <code class="k">if</code> <code class="p">(</code><code class="k">typeof</code> <code class="nx">onFulfilled</code> <code class="o">===</code> <code class="s1">&apos;function&apos;</code><code class="p">)</code> <code class="p">{</code>
+        <code class="nx">fulfilledTask</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+            <code class="kr">const</code> <code class="nx">r</code> <code class="o">=</code> <code class="nx">onFulfilled</code><code class="p">(</code><code class="nx">self</code><code class="p">.</code><code class="nx">promiseResult</code><code class="p">);</code>
+            <code class="nx">returnValue</code><code class="p">.</code><code class="nx">resolve</code><code class="p">(</code><code class="nx">r</code><code class="p">);</code> <code class="c1">// (B)</code>
+        <code class="p">};</code>
+    <code class="p">}</code> <code class="k">else</code> <code class="p">{</code>
+        <code class="nx">fulfilledTask</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+            <code class="nx">returnValue</code><code class="p">.</code><code class="nx">resolve</code><code class="p">(</code><code class="nx">self</code><code class="p">.</code><code class="nx">promiseResult</code><code class="p">);</code> <code class="c1">// (C)</code>
+        <code class="p">};</code>
+    <code class="p">}</code>
+
+    <code class="kd">let</code> <code class="nx">rejectedTask</code><code class="p">;</code>
+    <code class="k">if</code> <code class="p">(</code><code class="k">typeof</code> <code class="nx">onRejected</code> <code class="o">===</code> <code class="s1">&apos;function&apos;</code><code class="p">)</code> <code class="p">{</code>
+        <code class="nx">rejectedTask</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+            <code class="kr">const</code> <code class="nx">r</code> <code class="o">=</code> <code class="nx">onRejected</code><code class="p">(</code><code class="nx">self</code><code class="p">.</code><code class="nx">promiseResult</code><code class="p">);</code>
+            <code class="nx">returnValue</code><code class="p">.</code><code class="nx">resolve</code><code class="p">(</code><code class="nx">r</code><code class="p">);</code> <code class="c1">// (D)</code>
+        <code class="p">};</code>
+    <code class="p">}</code> <code class="k">else</code> <code class="p">{</code>
+        <code class="nx">rejectedTask</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+            <code class="c1">// `onRejected` has not been provided</code>
+            <code class="c1">// =&gt; we must pass on the rejection</code>
+            <code class="nx">returnValue</code><code class="p">.</code><code class="nx">reject</code><code class="p">(</code><code class="nx">self</code><code class="p">.</code><code class="nx">promiseResult</code><code class="p">);</code> <code class="c1">// (E)</code>
+        <code class="p">};</code>
+    <code class="p">}</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="k">return</code> <code class="nx">returnValue</code><code class="p">;</code> <code class="c1">// (F)</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p><code>then()</code> creates and returns a new Promise (lines A and F). Additionally, <code>fulfilledTask</code> and <code>rejectedTask</code> are set up differently: After a settlement&#x2026;</p>
+
+<ul>
+  <li>The result of <code>onFulfilled</code> is used to resolve <code>returnValue</code> (line B).
+    <ul>
+      <li>If <code>onFulfilled</code> is missing, we use the fulfillment value to resolve <code>returnValue</code> (line C).</li>
+    </ul>
+  </li>
+  <li>The result of <code>onRejected</code> is used to resolve (not reject!) <code>returnValue</code> (line D).
+    <ul>
+      <li>If <code>onRejected</code> is missing, we use pass on the rejection value to <code>returnValue</code> (line E).</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="_flattening">
+<span class="section-number">25.16.3 </span>Flattening <a class="header-anchor" href="#_flattening" aria-hidden="true">#</a></h4>
+
+<p>Flattening is mostly about making chaining more convenient: Normally, returning a value from a reaction passes it on to the next <code>then()</code>. If we return a Promise, it would be nice if it could be &#x201C;unwrapped&#x201D; for us, like in the following example:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc1</code><code class="p">()</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value1</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">asyncFunc2</code><code class="p">();</code> <code class="c1">// (A)</code>
+<code class="p">})</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">value2</code><code class="p">)</code> <code class="p">{</code>
+    <code class="c1">// value2 is fulfillment value of asyncFunc2() Promise</code>
+    <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">value2</code><code class="p">);</code>
+<code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>We returned a Promise in line A and didn&#x2019;t have to nest a call to <code>then()</code> inside the current method, we could invoke <code>then()</code> on the method&#x2019;s result. Thus: no nested <code>then()</code>, everything remains flat.</p>
+
+<p>We implement this by letting the <code>resolve()</code> method do the flattening:</p>
+
+<ul>
+  <li>Resolving a Promise P with a Promise Q means that Q&#x2019;s settlement is forwarded to P&#x2019;s reactions.</li>
+  <li>P becomes &#x201C;locked in&#x201D; on Q: it can&#x2019;t be resolved (incl. rejected), anymore. And its state and result are always the same as Q&#x2019;s.</li>
+</ul>
+
+<p>We can make flattening more generic if we allow Q to be a thenable (instead of only a Promise).</p>
+
+
+<figure class="image center" style="width: 408px;">
+  <img src="images/promises----promise3_flattening.jpg" alt="" style="width: 100%;" width="426" height="204">
+  <figcaption></figcaption>
+</figure>
+
+
+<p>To implement locking-in, we introduce a new boolean flag <code>this.alreadyResolved</code>. Once it is true, <code>this</code> is locked and can&#x2019;t be resolved anymore. Note that <code>this</code> may still be pending, because its state is now the same as the Promise it is locked in on.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">resolve</code><code class="p">(</code><code class="nx">value</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">if</code> <code class="p">(</code><code class="k">this</code><code class="p">.</code><code class="nx">alreadyResolved</code><code class="p">)</code> <code class="k">return</code><code class="p">;</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">alreadyResolved</code> <code class="o">=</code> <code class="kc">true</code><code class="p">;</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">_doResolve</code><code class="p">(</code><code class="nx">value</code><code class="p">);</code>
+    <code class="k">return</code> <code class="k">this</code><code class="p">;</code> <code class="c1">// enable chaining</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>The actual resolution now happens in the private method <code>_doResolve()</code>:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">_doResolve</code><code class="p">(</code><code class="nx">value</code><code class="p">)</code> <code class="p">{</code>
+    <code class="kr">const</code> <code class="nx">self</code> <code class="o">=</code> <code class="k">this</code><code class="p">;</code>
+    <code class="c1">// Is `value` a thenable?</code>
+    <code class="k">if</code> <code class="p">(</code><code class="k">typeof</code> <code class="nx">value</code> <code class="o">===</code> <code class="s1">&apos;object&apos;</code> <code class="o">&amp;&amp;</code> <code class="nx">value</code> <code class="o">!==</code> <code class="kc">null</code> <code class="o">&amp;&amp;</code> <code class="s1">&apos;then&apos;</code> <code class="k">in</code> <code class="nx">value</code><code class="p">)</code> <code class="p">{</code>
+        <code class="c1">// Forward fulfillments and rejections from `value` to `this`.</code>
+        <code class="c1">// Added as a task (versus done immediately) to preserve async semant\</code>
+<code class="nx">ics</code><code class="p">.</code>
+        <code class="nx">addToTaskQueue</code><code class="p">(</code><code class="kd">function</code> <code class="p">()</code> <code class="p">{</code> <code class="c1">// (A)</code>
+            <code class="nx">value</code><code class="p">.</code><code class="nx">then</code><code class="p">(</code>
+                <code class="kd">function</code> <code class="nx">onFulfilled</code><code class="p">(</code><code class="nx">result</code><code class="p">)</code> <code class="p">{</code>
+                    <code class="nx">self</code><code class="p">.</code><code class="nx">_doResolve</code><code class="p">(</code><code class="nx">result</code><code class="p">);</code>
+                <code class="p">},</code>
+                <code class="kd">function</code> <code class="nx">onRejected</code><code class="p">(</code><code class="nx">error</code><code class="p">)</code> <code class="p">{</code>
+                    <code class="nx">self</code><code class="p">.</code><code class="nx">_doReject</code><code class="p">(</code><code class="nx">error</code><code class="p">);</code>
+                <code class="p">});</code>
+        <code class="p">});</code>
+    <code class="p">}</code> <code class="k">else</code> <code class="p">{</code>
+        <code class="k">this</code><code class="p">.</code><code class="nx">promiseState</code> <code class="o">=</code> <code class="s1">&apos;fulfilled&apos;</code><code class="p">;</code>
+        <code class="k">this</code><code class="p">.</code><code class="nx">promiseResult</code> <code class="o">=</code> <code class="nx">value</code><code class="p">;</code>
+        <code class="k">this</code><code class="p">.</code><code class="nx">_clearAndEnqueueReactions</code><code class="p">(</code><code class="k">this</code><code class="p">.</code><code class="nx">fulfillReactions</code><code class="p">);</code>
+    <code class="p">}</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>The flattening is performed in line A: If <code>value</code> is fulfilled, we want <code>self</code> to be fulfilled and if <code>value</code> is rejected, we want <code>self</code> to be rejected. The forwarding happens via the private methods <code>_doResolve</code> and <code>_doReject</code>, to get around the protection via <code>alreadyResolved</code>.</p>
+
+<h4 id="_promise-states-in-more-detail">
+<span class="section-number">25.16.4 </span>Promise states in more detail <a class="header-anchor" href="#_promise-states-in-more-detail" aria-hidden="true">#</a></h4>
+
+<p>With chaining, the states of Promises become more complex (as covered by <a href="http://www.ecma-international.org/ecma-262/6.0/#sec-promise-objects">Sect. 25.4</a> of the ECMAScript 6 specification):</p>
+
+
+<figure class="image center" style="width: 300px;">
+  <img src="images/promises----promise_states_all.jpg" alt="" style="width: 100%;" width="313.5" height="233.25">
+  <figcaption></figcaption>
+</figure>
+
+
+<p>If you are only <em>using</em> Promises, you can normally adopt a simplified worldview and ignore locking-in. The most important state-related concept remains &#x201C;settledness&#x201D;: a Promise is settled if it is either fulfilled or rejected. After a Promise is settled, it doesn&#x2019;t change, anymore (state and fulfillment or rejection value).</p>
+
+<p>If you want to <em>implement</em> Promises then &#x201C;resolving&#x201D; matters, too and is now harder to understand:</p>
+
+<ul>
+  <li>Intuitively, &#x201C;resolved&#x201D; means &#x201C;can&#x2019;t be (directly) resolved anymore&#x201D;. A Promise is resolved if it is either settled or locked in. Quoting the spec: &#x201C;An unresolved Promise is always in the pending state. A resolved Promise may be pending, fulfilled or rejected.&#x201D;</li>
+  <li>Resolving does not necessarily lead to settling: you can resolve a Promise with another one that is always pending.</li>
+  <li>Resolving now includes rejecting (i.e., it is more general): you can reject a Promise by resolving it with a rejected Promise.</li>
+</ul>
+
+<h4 id="_exceptions">
+<span class="section-number">25.16.5 </span>Exceptions <a class="header-anchor" href="#_exceptions" aria-hidden="true">#</a></h4>
+
+<p>As our final feature, we&#x2019;d like our Promises to handle exceptions in user code as rejections. For now, &#x201C;user code&#x201D; means the two callback parameters of <code>then()</code>.</p>
+
+
+<figure class="image center" style="width: 409px;">
+  <img src="images/promises----promise4_exceptions.jpg" alt="" style="width: 100%;" width="427" height="203">
+  <figcaption></figcaption>
+</figure>
+
+
+<p>The following excerpt shows how we turn exceptions inside <code>onFulfilled</code> into rejections &#x2013; by wrapping a <code>try-catch</code> around its invocation in line A.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">then</code><code class="p">(</code><code class="nx">onFulfilled</code><code class="p">,</code> <code class="nx">onRejected</code><code class="p">)</code> <code class="p">{</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+    <code class="kd">let</code> <code class="nx">fulfilledTask</code><code class="p">;</code>
+    <code class="k">if</code> <code class="p">(</code><code class="k">typeof</code> <code class="nx">onFulfilled</code> <code class="o">===</code> <code class="s1">&apos;function&apos;</code><code class="p">)</code> <code class="p">{</code>
+        <code class="nx">fulfilledTask</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+            <code class="k">try</code> <code class="p">{</code>
+                <code class="kr">const</code> <code class="nx">r</code> <code class="o">=</code> <code class="nx">onFulfilled</code><code class="p">(</code><code class="nx">self</code><code class="p">.</code><code class="nx">promiseResult</code><code class="p">);</code> <code class="c1">// (A)</code>
+                <code class="nx">returnValue</code><code class="p">.</code><code class="nx">resolve</code><code class="p">(</code><code class="nx">r</code><code class="p">);</code>
+            <code class="p">}</code> <code class="k">catch</code> <code class="p">(</code><code class="nx">e</code><code class="p">)</code> <code class="p">{</code>
+                <code class="nx">returnValue</code><code class="p">.</code><code class="nx">reject</code><code class="p">(</code><code class="nx">e</code><code class="p">);</code>
+            <code class="p">}</code>
+        <code class="p">};</code>
+    <code class="p">}</code> <code class="k">else</code> <code class="p">{</code>
+        <code class="nx">fulfilledTask</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+            <code class="nx">returnValue</code><code class="p">.</code><code class="nx">resolve</code><code class="p">(</code><code class="nx">self</code><code class="p">.</code><code class="nx">promiseResult</code><code class="p">);</code>
+        <code class="p">};</code>
+    <code class="p">}</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_revealing-constructor-pattern">
+<span class="section-number">25.16.6 </span>Revealing constructor pattern <a class="header-anchor" href="#_revealing-constructor-pattern" aria-hidden="true">#</a></h4>
+
+<p>If we wanted to turn <code>DemoPromise</code> into an actual Promise implementation, we&#x2019;d still need to implement <a href="ch_promises.html#ch_promises_ref_2">the revealing constructor pattern [2]</a>: ES6 Promises are not resolved and rejected via methods, but via functions that are handed to the <em>executor</em>, the callback parameter of the constructor.</p>
+
+
+<figure class="image center" style="width: 409px;">
+  <img src="images/promises----promise5_everything.jpg" alt="" style="width: 100%;" width="427" height="230">
+  <figcaption></figcaption>
+</figure>
+
+
+<p>If the executor throws an exception then &#x201C;its&#x201D; Promise must be rejected.</p>
+
+
+<h3 id="sec_promises-pros-cons">
+<span class="section-number">25.17 </span>Advantages and limitations of Promises <a class="header-anchor" href="#sec_promises-pros-cons" aria-hidden="true">#</a></h3>
+
+
+<h4 id="_advantages-of-promises">
+<span class="section-number">25.17.1 </span>Advantages of Promises <a class="header-anchor" href="#_advantages-of-promises" aria-hidden="true">#</a></h4>
+
+<h5 id="_unifying-asynchronous-apis">
+<span class="section-number">25.17.1.1 </span>Unifying asynchronous APIs <a class="header-anchor" href="#_unifying-asynchronous-apis" aria-hidden="true">#</a></h5>
+
+<p>One important advantage of Promises is that they will increasingly be used by asynchronous browser APIs and unify currently diverse and incompatible patterns and conventions. Let&#x2019;s look at two upcoming Promise-based APIs.</p>
+
+<p><a href="http://jakearchibald.com/2015/thats-so-fetch/">The fetch API</a> is a Promise-based alternative to XMLHttpRequest:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">fetch</code><code class="p">(</code><code class="nx">url</code><code class="p">)</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">request</code> <code class="p">=&gt;</code> <code class="nx">request</code><code class="p">.</code><code class="nx">text</code><code class="p">())</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">str</code> <code class="p">=&gt;</code> <code class="err">&#xB7;&#xB7;&#xB7;</code><code class="p">)</code>
+</pre></div>
+
+</figure>
+
+<p><code>fetch()</code> returns a Promise for the actual request, <code>text()</code> returns a Promise for the content as a string.</p>
+
+<p>The <a href="ch_modules.html#sec_module-loader-api">ECMAScript 6 API for programmatically importing modules</a> is based on Promises, too:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">System</code><code class="p">.</code><code class="kr">import</code><code class="p">(</code><code class="s1">&apos;some_module.js&apos;</code><code class="p">)</code>
+<code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">some_module</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">})</code>
+</pre></div>
+
+</figure>
+
+<h5 id="_promises-versus-events">
+<span class="section-number">25.17.1.2 </span>Promises versus events <a class="header-anchor" href="#_promises-versus-events" aria-hidden="true">#</a></h5>
+
+<p>Compared to events, Promises are better for handling one-off results. It doesn&#x2019;t matter whether you register for a result before or after it has been computed, you will get it. This advantage of Promises is fundamental in nature. On the flip side, you can&#x2019;t use them for handling recurring events. Chaining is another advantage of Promises, but one that could be added to event handling.</p>
+
+<h5 id="_promises-versus-callbacks">
+<span class="section-number">25.17.1.3 </span>Promises versus callbacks <a class="header-anchor" href="#_promises-versus-callbacks" aria-hidden="true">#</a></h5>
+
+<p>Compared to callbacks, Promises have cleaner function (or method) signatures. With callbacks, parameters are used for input and output:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">fs</code><code class="p">.</code><code class="nx">readFile</code><code class="p">(</code><code class="nx">name</code><code class="p">,</code> <code class="nx">opts</code><code class="o">?</code><code class="p">,</code> <code class="p">(</code><code class="nx">err</code><code class="p">,</code> <code class="nx">string</code> <code class="o">|</code> <code class="nx">Buffer</code><code class="p">)</code> <code class="p">=&gt;</code> <code class="k">void</code><code class="p">)</code>
+</pre></div>
+
+</figure>
+
+<p>With Promises, all parameters are used for input:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">readFilePromisified</code><code class="p">(</code><code class="nx">name</code><code class="p">,</code> <code class="nx">opts</code><code class="o">?</code><code class="p">)</code> <code class="o">:</code> <code class="nb">Promise</code><code class="o">&lt;</code><code class="nx">string</code> <code class="o">|</code> <code class="nx">Buffer</code><code class="o">&gt;</code>
+</pre></div>
+
+</figure>
+
+<p>Additional Promise advantages include:</p>
+
+<ul>
+  <li>Unified handling of both asynchronous errors and normal exceptions.</li>
+  <li>Easier composition, because you can reuse synchronous tools such as <code>Array.prototype.map()</code>.</li>
+  <li>Chaining of <code>then()</code> and <code>catch()</code>.</li>
+  <li>Guarding against notifying callbacks more than once. Some development environments also warn about rejections that are never handled.</li>
+</ul>
+
+<h4 id="_promises-are-not-always-the-best-choice">
+<span class="section-number">25.17.2 </span>Promises are not always the best choice <a class="header-anchor" href="#_promises-are-not-always-the-best-choice" aria-hidden="true">#</a></h4>
+
+<p>Promises work well for for single asynchronous results. They are not suited for:</p>
+
+<ul>
+  <li>Recurring events: If you are interested in those, take a look at <a href="https://github.com/Reactive-Extensions/RxJS">reactive programming</a>, which add a clever way of chaining to normal event handling.</li>
+  <li>Streams of data: A <a href="https://streams.spec.whatwg.org/">standard</a> for supporting those is currently in development.</li>
+</ul>
+
+<p>ECMAScript 6 Promises lack two features that are sometimes useful:</p>
+
+<ul>
+  <li>You can&#x2019;t cancel them.</li>
+  <li>You can&#x2019;t query them for how far along they are (e.g. to display a progress bar in a client-side user interface).</li>
+</ul>
+
+<p>The Q Promise library has <a href="https://github.com/kriskowal/q#progress-notification">support</a> for the latter and there are <a href="https://github.com/promises-aplus">plans</a> to add both capabilities to Promises/A+.</p>
+
+
+<h3 id="sec_reference-promises">
+<span class="section-number">25.18 </span>Reference: the ECMAScript 6 Promise API <a class="header-anchor" href="#sec_reference-promises" aria-hidden="true">#</a></h3>
+
+<p>This section gives an overview of the ECMAScript 6 Promise API, as described in the <a href="http://www.ecma-international.org/ecma-262/6.0/#sec-promise-objects">specification</a>.</p>
+
+<h4 id="_promise-constructor">
+<span class="section-number">25.18.1 </span><code>Promise</code> constructor <a class="header-anchor" href="#_promise-constructor" aria-hidden="true">#</a></h4>
+
+<p>The constructor for Promises is invoked as follows:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">p</code> <code class="o">=</code> <code class="k">new</code> <code class="nb">Promise</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">resolve</code><code class="p">,</code> <code class="nx">reject</code><code class="p">)</code> <code class="p">{</code> <code class="err">&#xB7;&#xB7;&#xB7;</code> <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>The callback of this constructor is called an <em>executor</em>. The executor can use its parameters to resolve or reject the new Promise <code>p</code>:</p>
+
+<ul>
+  <li>
+<code>resolve(x)</code> resolves <code>p</code> with <code>x</code>:
+    <ul>
+      <li>If <code>x</code> is thenable, its settlement is forwarded to <code>p</code> (which includes triggering reactions registered via <code>then()</code>).</li>
+      <li>Otherwise, <code>p</code> is fulfilled with <code>x</code>.</li>
+    </ul>
+  </li>
+  <li>
+<code>reject(e)</code> rejects <code>p</code> with the value <code>e</code> (often an instance of <a href="http://speakingjs.com/es5/ch14.html#error_constructors"><code>Error</code></a>).</li>
+</ul>
+
+<h4 id="_static-promise-methods">
+<span class="section-number">25.18.2 </span>Static <code>Promise</code> methods <a class="header-anchor" href="#_static-promise-methods" aria-hidden="true">#</a></h4>
+
+<h5 id="_creating-promises">
+<span class="section-number">25.18.2.1 </span>Creating Promises <a class="header-anchor" href="#_creating-promises" aria-hidden="true">#</a></h5>
+
+<p>The following two static methods create new instances of their receivers:</p>
+
+<ul>
+  <li>
+<code>Promise.resolve(x)</code>: converts arbitrary values to Promises, with an awareness of Promises.
+    <ul>
+      <li>If the constructor of <code>x</code> is the receiver, <code>x</code> is returned unchanged.</li>
+      <li>Otherwise, return a new instance of the receiver that is fulfilled with <code>x</code>.</li>
+    </ul>
+  </li>
+  <li>
+<code>Promise.reject(reason)</code>: creates a new instance of the receiver that is rejected with the value <code>reason</code>.</li>
+</ul>
+
+<h5 id="_composing-promises">
+<span class="section-number">25.18.2.2 </span>Composing Promises <a class="header-anchor" href="#_composing-promises" aria-hidden="true">#</a></h5>
+
+<p>Intuitively, the static methods <code>Promise.all()</code> and <code>Promise.race()</code> compose iterables of Promises to a single Promise. That is:</p>
+
+<ul>
+  <li>They take an iterable. The elements of the iterable are converted to Promises via <code>this.resolve()</code>.</li>
+  <li>They return a new Promise. That Promise is a new instance of the receiver.</li>
+</ul>
+
+<p>The methods are:</p>
+
+<ul>
+  <li>
+<code>Promise.all(iterable)</code>: returns a Promise that&#x2026;
+    <ul>
+      <li>is fulfilled if all elements in <code>iterable</code> are fulfilled.<br>
+  Fulfillment value: Array with fulfillment values.</li>
+      <li>is rejected if any of the elements are rejected.<br>
+  Rejection value: first rejection value.</li>
+    </ul>
+  </li>
+  <li>
+<code>Promise.race(iterable)</code>: the first element of <code>iterable</code> that is settled is used to settle the returned Promise.</li>
+</ul>
+
+<h4 id="_promiseprototype-methods">
+<span class="section-number">25.18.3 </span><code>Promise.prototype</code> methods <a class="header-anchor" href="#_promiseprototype-methods" aria-hidden="true">#</a></h4>
+
+<h5 id="_promiseprototypethenonfulfilled-onrejected">
+<span class="section-number">25.18.3.1 </span><code>Promise.prototype.then(onFulfilled, onRejected)</code>
+ <a class="header-anchor" href="#_promiseprototypethenonfulfilled-onrejected" aria-hidden="true">#</a></h5>
+
+<ul>
+  <li>The callbacks <code>onFulfilled</code> and <code>onRejected</code> are called <em>reactions</em>.</li>
+  <li>
+<code>onFulfilled</code> is called immediately if the Promise is already fulfilled or as soon as it becomes fulfilled. Similarly, <code>onRejected</code> is informed of rejections.</li>
+  <li>
+<code>then()</code> returns a new Promise Q (created via the species of the constructor of the receiver):
+    <ul>
+      <li>If either of the reactions returns a value, Q is resolved with it.</li>
+      <li>If either of the reactions throws an exception, Q is rejected with it.</li>
+    </ul>
+  </li>
+  <li>Omitted reactions:
+    <ul>
+      <li>If <code>onFulfilled</code> has been omitted, a fulfillment of the receiver is forwarded to the result of <code>then()</code>.</li>
+      <li>If <code>onRejected</code> has been omitted, a rejection of the receiver is forwarded to the result of <code>then()</code>.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Default values for omitted reactions could be implemented like this:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">defaultOnFulfilled</code><code class="p">(</code><code class="nx">x</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">x</code><code class="p">;</code>
+<code class="p">}</code>
+<code class="kd">function</code> <code class="nx">defaultOnRejected</code><code class="p">(</code><code class="nx">e</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">throw</code> <code class="nx">e</code><code class="p">;</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<h5 id="_promiseprototypecatchonrejected">
+<span class="section-number">25.18.3.2 </span><code>Promise.prototype.catch(onRejected)</code>
+ <a class="header-anchor" href="#_promiseprototypecatchonrejected" aria-hidden="true">#</a></h5>
+
+<ul>
+  <li>
+<code>p.catch(onRejected)</code> is the same as <code>p.then(null, onRejected)</code>.</li>
+</ul>
+
+
+<h3 id="sec_further-reading-promises">
+<span class="section-number">25.19 </span>Further reading <a class="header-anchor" href="#sec_further-reading-promises" aria-hidden="true">#</a></h3>
+
+<p id="ch_promises_ref_1">[1] &#x201C;<a href="http://promisesaplus.com/">Promises/A+</a>&#x201D;, edited by Brian Cavalier and Domenic Denicola (the de-facto standard for JavaScript Promises)</p>
+
+<p id="ch_promises_ref_2">[2] &#x201C;<a href="http://domenic.me/2014/02/13/the-revealing-constructor-pattern/">The Revealing Constructor Pattern</a>&#x201D; by Domenic Denicola (this pattern is used by the <code>Promise</code> constructor)</p>
+
+
+
+
+
+
+
+<div class="next-chapter">
+    Next: <a href="pt_misc.html">VI Miscellaneous</a>
+</div>
+
+
+</div>
+</body>
+</html>

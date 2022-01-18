@@ -1,0 +1,32 @@
+<div class="container">
+    <h2>Salvar contato</h2>
+    <form (ngSubmit)="onSubmit()" #contatoForm="ngForm" novalidate>
+        <!-- <div class="form-group has-danger" [ngClass]="{'form-group': true, 'has-danger': (!nome.valid && !nome.pristine), 'has-success': (nome.valid && !nome.pristine)}">quando o nome não for valido && quando o nome ja ter sido alterado -->
+        <!-- <div class="form-group has-danger" [ngClass]="getFormGroupClass(nome.valid, nome.pristine)">quando o nome não for valido && quando o nome ja ter sido alterado -->
+        <div [ngClass]="getFormGroupClass(nome.valid, nome.pristine)"><!-- quando o nome não for valido && quando o nome ja ter sido alterado -->
+            <label for="nome" class="form-control-label">Nome</label>
+            <!-- <input type="text" class="form-control" placeholder="Insira o nome" value="{{contato.nome}}">  one way Databinding (dados apenas de leitura) -->
+            <!-- <input type="text" class="form-control" placeholder="Insira o nome" name="nome" [ngModel]="contato.nome" (ngModelChange)="contato.nome = $event"> two way Databinding (dados de leitura e escrita 'proprety Binding') -->
+            <!-- <input type="text" class="form-control" placeholder="Insira o nome" name="nome" [(ngModel)]="contato.nome" required #spy>two way Databinding (dados de leitura e escrita 'proprety Binding') -->
+            <!-- <input type="text" class="form-control form-control-danger" placeholder="Insira o nome" name="nome" [(ngModel)]="contato.nome" required #nome="ngModel">two way Databinding (dados de leitura e escrita 'proprety Binding') -->
+            <input type="text" placeholder="Insira o nome" name="nome" [(ngModel)]="contato.nome" required #nome="ngModel" [ngClass]="getFormControlClass(nome.valid, nome.pristine)"><!-- two way Databinding (dados de leitura e escrita 'proprety Binding')-->
+        <!-- <div class="alert alert-info">{{spy.className}}</div> -->
+        <div class="form-control-feedback" [hidden]="nome.valid || nome.pristine">O campo nome é obrigatório</div>
+        </div>
+        <div [ngClass]="getFormGroupClass(email.valid, email.pristine)">
+            <label for="email">Email</label>
+            <!-- <input type="email" class="form-control" placeholder="Insira o email" [value]="contato.email"> 'proprety Binding'-->
+            <input type="email" placeholder="Insira o email" name="email" [(ngModel)]="contato.email" required #email="ngModel" [ngClass]="getFormControlClass(email.valid, email.pristine)">
+            <div class="form-control-feedback" [hidden]="email.valid || email.pristine">O campo emael é obrigatório</div>
+        </div>
+        <div [ngClass]="getFormGroupClass(telefone.valid, telefone.pristine)">
+            <label for="telefone">Telefone</label>
+            <input type="text" placeholder="Insira o telefone" name="telefone" [(ngModel)]="contato.telefone" required #telefone="ngModel" [ngClass]="getFormControlClass(telefone.valid, telefone.pristine)">
+            <div class="form-control-feedback" [hidden]="telefone.valid || telefone.pristine">O campo telefone é obrigatório</div>
+        </div>
+        <button type="submit" class="btn btn-success" [disabled]="!contatoForm.form.valid">Salvar</button>
+        <a class="btn btn-secondary" (click)="goBack()">Voltar</a>
+    </form>
+    <!-- <button (click)="teste()" class="btn btn-warning">teste</button> -->
+    <!-- <button (click)="teste(contatoForm)" class="btn btn-warning">teste</button> -->
+</div>

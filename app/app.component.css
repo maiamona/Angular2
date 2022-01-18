@@ -1,0 +1,11 @@
+.fl{
+    display: flex;
+}
+
+.f{
+    float: right;
+}
+
+.pl{
+    padding-left: 1rem !important;
+}
