@@ -14,17 +14,17 @@ import { ContatoBuscaComponent } from "./contato-busca.component";
         ContatoRoutingModule,
         FormsModule
     ],
-declarations: [//aqui entra componentes, diretivas e pipes
-    ContatosListaComponent,
-    ContatoDetalheComponent,
-    ContatoBuscaComponent
-],
-exports: [
-    ContatosListaComponent,
-    ContatoBuscaComponent
-],
-providers: [
-    ContatoService
-]
+    declarations: [//aqui entra componentes, diretivas e pipes
+        ContatosListaComponent,
+        ContatoDetalheComponent,
+        ContatoBuscaComponent
+    ],
+    exports: [
+        ContatosListaComponent,
+        ContatoBuscaComponent
+    ],
+    providers: [
+        ContatoService
+    ]
 })
-export class ContatosModule {}
+export class ContatosModule { }
