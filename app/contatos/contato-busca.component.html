@@ -1,0 +1,25 @@
+<div class="container">
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col xl-6">
+            <h3>Busca</h3>
+            <div class="form-group">
+                <label for="search"></label>
+                <!-- <input type="search" class="form-control" placeholder="Digite sua busca" #searchBox (keyup)="search(searchBox.value)"> -->
+                <input type="search" class="form-control" placeholder="Digite sua busca" [ngModel]="buscar" (ngModelChange)="search($event)"><!-- search('$event') => o '$event' e o valor que o usuario coloca no 'input' -->
+              </div>
+              <ul class="list-group">
+                <li class="list-group-item cursor-pointer" *ngFor="let c of contatos | async" (click)="verDetalhe(c)">{{c.nome}}</li><!-- 'async' se subscreve em Observable -->
+              </ul>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col xl-6">
+          <div class="card" style="width: 100%;">
+            <img src="https://source.unsplash.com/random/538x538" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>

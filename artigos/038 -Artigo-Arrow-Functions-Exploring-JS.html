@@ -1,0 +1,824 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>13. Arrow functions</title>
+    <link href="stylesheet.css" type="text/css" rel="stylesheet" />
+    <link rel="icon" href="images/favicon-128.png" sizes="128x128">
+    <link rel="icon" href="images/favicon-32.png" sizes="32x32">
+    <link rel="icon" href="images/favicon-16.png" sizes="16x16">
+</head>
+<body>
+
+<div id="top-bar">
+    <div id="top-bar-content">
+        <b>13. Arrow functions</b><br>
+        <a href="index.html#toc_ch_arrow-functions">Table of contents</a><br>
+        Please support this book:
+        <a href="https://leanpub.com/exploring-es6/">buy it (PDF, EPUB, MOBI)</a>
+        or
+        <a href="http://www.2ality.com/p/donate.html">donate</a>
+    </div>
+</div>
+
+<div id="adbox">
+<div id="adbox-explain">(Ad, please don’t block.)</div>
+
+    <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CKYIEKQL&placement=exploringjscom" id="_carbonads_js"></script>
+
+</div>
+
+<div id="page-content">
+
+
+<h2 id="ch_arrow-functions">
+<span class="section-number">13. </span>Arrow functions <a class="header-anchor" href="#ch_arrow-functions" aria-hidden="true">#</a></h2>
+
+<hr class="scene-break">
+
+<ul>
+  <li>13.1. <a href="ch_arrow-functions.html#sec_overview-arrow-functions">Overview</a>
+</li>
+  <li>13.2. <a href="ch_arrow-functions.html#sec_traditional-functions-bad-non-methods">Traditional functions are bad non-method functions, due to <code>this</code></a>
+    <ul>
+      <li>13.2.1. Solution 1: <code>that = this</code>
+</li>
+      <li>13.2.2. Solution 2: specifying a value for <code>this</code>
+</li>
+      <li>13.2.3. Solution 3: <code>bind(this)</code>
+</li>
+      <li>13.2.4. ECMAScript 6 solution: arrow functions</li>
+    </ul>
+  </li>
+  <li>13.3. <a href="ch_arrow-functions.html#sec_arrow-function-syntax">Arrow function syntax</a>
+    <ul>
+      <li>13.3.1. Omitting parentheses around single parameters</li>
+    </ul>
+  </li>
+  <li>13.4. <a href="ch_arrow-functions.html#sec_lexical-variables">Lexical variables</a>
+    <ul>
+      <li>13.4.1. Propagating variable values: static versus dynamic</li>
+      <li>13.4.2. Variables that are lexical in arrow functions</li>
+    </ul>
+  </li>
+  <li>13.5. <a href="ch_arrow-functions.html#sec_syntactic-pitfalls-arrow-functions">Syntax pitfalls</a>
+    <ul>
+      <li>13.5.1. Arrow functions bind very loosely</li>
+      <li>13.5.2. No line break after arrow function parameters</li>
+      <li>13.5.3. You can&#x2019;t use statements as expression bodies</li>
+      <li>13.5.4. Returning object literals</li>
+    </ul>
+  </li>
+  <li>13.6. <a href="ch_arrow-functions.html#iiaf">Immediately-invoked arrow functions</a>
+    <ul>
+      <li>13.6.1. Semicolons</li>
+      <li>13.6.2. Parenthesizing arrow function with block bodies</li>
+      <li>13.6.3. Parenthesizing arrow function with expression bodies</li>
+    </ul>
+  </li>
+  <li>13.7. <a href="ch_arrow-functions.html#sec_arrow-func-vs-bind">Arrow functions versus <code>bind()</code></a>
+    <ul>
+      <li>13.7.1. Extracting methods</li>
+      <li>13.7.2. <code>this</code> via parameters</li>
+      <li>13.7.3. Partial evaluation</li>
+    </ul>
+  </li>
+  <li>13.8. <a href="ch_arrow-functions.html#sec_arrow-func-vs-normal-func">Arrow functions versus normal functions</a>
+</li>
+  <li>13.9. <a href="ch_arrow-functions.html#sec_faq-arrow-functions">FAQ: arrow functions</a>
+    <ul>
+      <li>13.9.1. Why are there &#x201C;fat&#x201D; arrow functions (<code>=&gt;</code>) in ES6, but no &#x201C;thin&#x201D; arrow functions (<code>-&gt;</code>)?</li>
+    </ul>
+  </li>
+</ul>
+
+<hr class="scene-break">
+
+
+<h3 id="sec_overview-arrow-functions">
+<span class="section-number">13.1 </span>Overview <a class="header-anchor" href="#sec_overview-arrow-functions" aria-hidden="true">#</a></h3>
+
+<p>There are two benefits to arrow functions.</p>
+
+<p>First, they are less verbose than traditional function expressions:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">arr</code> <code class="o">=</code> <code class="p">[</code><code class="mi">1</code><code class="p">,</code> <code class="mi">2</code><code class="p">,</code> <code class="mi">3</code><code class="p">];</code>
+<code class="kr">const</code> <code class="nx">squares</code> <code class="o">=</code> <code class="nx">arr</code><code class="p">.</code><code class="nx">map</code><code class="p">(</code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="nx">x</code> <code class="o">*</code> <code class="nx">x</code><code class="p">);</code>
+
+<code class="c1">// Traditional function expression:</code>
+<code class="kr">const</code> <code class="nx">squares</code> <code class="o">=</code> <code class="nx">arr</code><code class="p">.</code><code class="nx">map</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">x</code><code class="p">)</code> <code class="p">{</code> <code class="k">return</code> <code class="nx">x</code> <code class="o">*</code> <code class="nx">x</code> <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+<p>Second, their <code>this</code> is picked up from surroundings (<em>lexical</em>). Therefore, you don&#x2019;t need <code>bind()</code> or <code>that = this</code>, anymore.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">UiComponent</code><code class="p">()</code> <code class="p">{</code>
+    <code class="kr">const</code> <code class="nx">button</code> <code class="o">=</code> <code class="nb">document</code><code class="p">.</code><code class="nx">getElementById</code><code class="p">(</code><code class="s1">&apos;myButton&apos;</code><code class="p">);</code>
+    <code class="nx">button</code><code class="p">.</code><code class="nx">addEventListener</code><code class="p">(</code><code class="s1">&apos;click&apos;</code><code class="p">,</code> <code class="p">()</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="s1">&apos;CLICK&apos;</code><code class="p">);</code>
+        <code class="k">this</code><code class="p">.</code><code class="nx">handleClick</code><code class="p">();</code> <code class="c1">// lexical `this`</code>
+    <code class="p">});</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>The following variables are all lexical inside arrow functions:</p>
+
+<ul>
+  <li><code>arguments</code></li>
+  <li><code>super</code></li>
+  <li><code>this</code></li>
+  <li><code>new.target</code></li>
+</ul>
+
+
+<h3 id="sec_traditional-functions-bad-non-methods">
+<span class="section-number">13.2 </span>Traditional functions are bad non-method functions, due to <code>this</code>
+ <a class="header-anchor" href="#sec_traditional-functions-bad-non-methods" aria-hidden="true">#</a></h3>
+
+<p>In JavaScript, traditional functions can be used as:</p>
+
+<ol class="numeric">
+  <li>Non-method functions</li>
+  <li>Methods</li>
+  <li>Constructors</li>
+</ol>
+
+<p>These roles clash: Due to roles 2 and 3, functions always have their own <code>this</code>. But that prevents you from accessing the <code>this</code> of, e.g., a surrounding method from inside a callback (role 1).</p>
+
+<p>You can see that in the following ES5 code:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">Prefixer</code><code class="p">(</code><code class="nx">prefix</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">=</code> <code class="nx">prefix</code><code class="p">;</code>
+<code class="p">}</code>
+<code class="nx">Prefixer</code><code class="p">.</code><code class="nx">prototype</code><code class="p">.</code><code class="nx">prefixArray</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">(</code><code class="nx">arr</code><code class="p">)</code> <code class="p">{</code> <code class="c1">// (A)</code>
+    <code class="s1">&apos;use strict&apos;</code><code class="p">;</code>
+    <code class="k">return</code> <code class="nx">arr</code><code class="p">.</code><code class="nx">map</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">x</code><code class="p">)</code> <code class="p">{</code> <code class="c1">// (B)</code>
+        <code class="c1">// Doesn&#x2019;t work:</code>
+        <code class="k">return</code> <code class="k">this</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">+</code> <code class="nx">x</code><code class="p">;</code> <code class="c1">// (C)</code>
+    <code class="p">});</code>
+<code class="p">};</code>
+</pre></div>
+
+</figure>
+
+<p>In line C, we&#x2019;d like to access <code>this.prefix</code>, but can&#x2019;t, because the <code>this</code> of the function from line B shadows the <code>this</code> of the method from line A. In strict mode, <code>this</code> is <code>undefined</code> in non-method functions, which is why we get an error if we use <code>Prefixer</code>:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code>&gt; var pre = new Prefixer(&apos;Hi &apos;);
+&gt; pre.prefixArray([&apos;Joe&apos;, &apos;Alex&apos;])
+TypeError: Cannot read property &apos;prefix&apos; of undefined
+</pre></div>
+
+</figure>
+
+<p>There are three ways to work around this problem in ECMAScript 5.</p>
+
+<h4 id="_solution-1-that--this">
+<span class="section-number">13.2.1 </span>Solution 1: <code>that = this</code>
+ <a class="header-anchor" href="#_solution-1-that--this" aria-hidden="true">#</a></h4>
+
+<p>You can assign <code>this</code> to a variable that isn&#x2019;t shadowed. That&#x2019;s what&#x2019;s done in line A, below:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">Prefixer</code><code class="p">(</code><code class="nx">prefix</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">=</code> <code class="nx">prefix</code><code class="p">;</code>
+<code class="p">}</code>
+<code class="nx">Prefixer</code><code class="p">.</code><code class="nx">prototype</code><code class="p">.</code><code class="nx">prefixArray</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">(</code><code class="nx">arr</code><code class="p">)</code> <code class="p">{</code>
+    <code class="kd">var</code> <code class="nx">that</code> <code class="o">=</code> <code class="k">this</code><code class="p">;</code> <code class="c1">// (A)</code>
+    <code class="k">return</code> <code class="nx">arr</code><code class="p">.</code><code class="nx">map</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">x</code><code class="p">)</code> <code class="p">{</code>
+        <code class="k">return</code> <code class="nx">that</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">+</code> <code class="nx">x</code><code class="p">;</code>
+    <code class="p">});</code>
+<code class="p">};</code>
+</pre></div>
+
+</figure>
+
+<p>Now <code>Prefixer</code> works as expected:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code>&gt; var pre = new Prefixer(&apos;Hi &apos;);
+&gt; pre.prefixArray([&apos;Joe&apos;, &apos;Alex&apos;])
+[ &apos;Hi Joe&apos;, &apos;Hi Alex&apos; ]
+</pre></div>
+
+</figure>
+
+<h4 id="_solution-2-specifying-a-value-for-this">
+<span class="section-number">13.2.2 </span>Solution 2: specifying a value for <code>this</code>
+ <a class="header-anchor" href="#_solution-2-specifying-a-value-for-this" aria-hidden="true">#</a></h4>
+
+<p>A few Array methods have an extra parameter for specifying the value that <code>this</code> should have when invoking the callback. That&#x2019;s the last parameter in line A, below.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">Prefixer</code><code class="p">(</code><code class="nx">prefix</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">=</code> <code class="nx">prefix</code><code class="p">;</code>
+<code class="p">}</code>
+<code class="nx">Prefixer</code><code class="p">.</code><code class="nx">prototype</code><code class="p">.</code><code class="nx">prefixArray</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">(</code><code class="nx">arr</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">arr</code><code class="p">.</code><code class="nx">map</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">x</code><code class="p">)</code> <code class="p">{</code>
+        <code class="k">return</code> <code class="k">this</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">+</code> <code class="nx">x</code><code class="p">;</code>
+    <code class="p">},</code> <code class="k">this</code><code class="p">);</code> <code class="c1">// (A)</code>
+<code class="p">};</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_solution-3-bindthis">
+<span class="section-number">13.2.3 </span>Solution 3: <code>bind(this)</code>
+ <a class="header-anchor" href="#_solution-3-bindthis" aria-hidden="true">#</a></h4>
+
+<p>You can use the method <code>bind()</code> to convert a function whose <code>this</code> is determined by how it is called (via <code>call()</code>, a function call, a method call, etc.) to a function whose <code>this</code> is always the same fixed value. That&#x2019;s what we are doing in line A, below.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">Prefixer</code><code class="p">(</code><code class="nx">prefix</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">=</code> <code class="nx">prefix</code><code class="p">;</code>
+<code class="p">}</code>
+<code class="nx">Prefixer</code><code class="p">.</code><code class="nx">prototype</code><code class="p">.</code><code class="nx">prefixArray</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">(</code><code class="nx">arr</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">arr</code><code class="p">.</code><code class="nx">map</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">x</code><code class="p">)</code> <code class="p">{</code>
+        <code class="k">return</code> <code class="k">this</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">+</code> <code class="nx">x</code><code class="p">;</code>
+    <code class="p">}.</code><code class="nx">bind</code><code class="p">(</code><code class="k">this</code><code class="p">));</code> <code class="c1">// (A)</code>
+<code class="p">};</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_ecmascript-6-solution-arrow-functions">
+<span class="section-number">13.2.4 </span>ECMAScript 6 solution: arrow functions <a class="header-anchor" href="#_ecmascript-6-solution-arrow-functions" aria-hidden="true">#</a></h4>
+
+<p>Arrow functions work much like solution 3. However, it&#x2019;s best to think of them as a new kind of functions that don&#x2019;t lexically shadow <code>this</code>. That is, they are different from normal functions (you could even say that they do less). They are not normal functions plus binding.</p>
+
+<p>With an arrow function, the code looks as follows.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">Prefixer</code><code class="p">(</code><code class="nx">prefix</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">this</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">=</code> <code class="nx">prefix</code><code class="p">;</code>
+<code class="p">}</code>
+<code class="nx">Prefixer</code><code class="p">.</code><code class="nx">prototype</code><code class="p">.</code><code class="nx">prefixArray</code> <code class="o">=</code> <code class="kd">function</code> <code class="p">(</code><code class="nx">arr</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">arr</code><code class="p">.</code><code class="nx">map</code><code class="p">((</code><code class="nx">x</code><code class="p">)</code> <code class="p">=&gt;</code> <code class="p">{</code>
+        <code class="k">return</code> <code class="k">this</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">+</code> <code class="nx">x</code><code class="p">;</code>
+    <code class="p">});</code>
+<code class="p">};</code>
+</pre></div>
+
+</figure>
+
+<p>To fully ES6-ify the code, you&#x2019;d use a class and a more compact variant of arrow functions:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">class</code> <code class="nx">Prefixer</code> <code class="p">{</code>
+    <code class="nx">constructor</code><code class="p">(</code><code class="nx">prefix</code><code class="p">)</code> <code class="p">{</code>
+        <code class="k">this</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">=</code> <code class="nx">prefix</code><code class="p">;</code>
+    <code class="p">}</code>
+    <code class="nx">prefixArray</code><code class="p">(</code><code class="nx">arr</code><code class="p">)</code> <code class="p">{</code>
+        <code class="k">return</code> <code class="nx">arr</code><code class="p">.</code><code class="nx">map</code><code class="p">(</code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="k">this</code><code class="p">.</code><code class="nx">prefix</code> <code class="o">+</code> <code class="nx">x</code><code class="p">);</code> <code class="c1">// (A)</code>
+    <code class="p">}</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>In line A we save a few characters by tweaking two parts of the arrow function:</p>
+
+<ul>
+  <li>If there is only one parameter and that parameter is an identifier then the parentheses can be omitted.</li>
+  <li>An expression following the arrow leads to that expression being returned.</li>
+</ul>
+
+
+<h3 id="sec_arrow-function-syntax">
+<span class="section-number">13.3 </span>Arrow function syntax <a class="header-anchor" href="#sec_arrow-function-syntax" aria-hidden="true">#</a></h3>
+
+<p>The &#x201C;fat&#x201D; arrow <code>=&gt;</code> (as opposed to the thin arrow <code>-&gt;</code>) was chosen to be compatible with CoffeeScript, whose fat arrow functions are very similar.</p>
+
+<p>Specifying parameters:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code>    <code class="p">()</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="p">...</code> <code class="p">}</code> <code class="c1">// no parameter</code>
+     <code class="nx">x</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="p">...</code> <code class="p">}</code> <code class="c1">// one parameter, an identifier</code>
+<code class="p">(</code><code class="nx">x</code><code class="p">,</code> <code class="nx">y</code><code class="p">)</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="p">...</code> <code class="p">}</code> <code class="c1">// several parameters</code>
+</pre></div>
+
+</figure>
+
+<p>Specifying a body:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="k">return</code> <code class="nx">x</code> <code class="o">*</code> <code class="nx">x</code> <code class="p">}</code>  <code class="c1">// block</code>
+<code class="nx">x</code> <code class="p">=&gt;</code> <code class="nx">x</code> <code class="o">*</code> <code class="nx">x</code>  <code class="c1">// expression, equivalent to previous line</code>
+</pre></div>
+
+</figure>
+
+<p>The statement block behaves like a normal function body. For example, you need <code>return</code> to give back a value. With an expression body, the expression is always implicitly returned.</p>
+
+<p>Note how much an arrow function with an expression body can reduce verbosity. Compare:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">squares</code> <code class="o">=</code> <code class="p">[</code><code class="mi">1</code><code class="p">,</code> <code class="mi">2</code><code class="p">,</code> <code class="mi">3</code><code class="p">].</code><code class="nx">map</code><code class="p">(</code><code class="kd">function</code> <code class="p">(</code><code class="nx">x</code><code class="p">)</code> <code class="p">{</code> <code class="k">return</code> <code class="nx">x</code> <code class="o">*</code> <code class="nx">x</code> <code class="p">});</code>
+<code class="kr">const</code> <code class="nx">squares</code> <code class="o">=</code> <code class="p">[</code><code class="mi">1</code><code class="p">,</code> <code class="mi">2</code><code class="p">,</code> <code class="mi">3</code><code class="p">].</code><code class="nx">map</code><code class="p">(</code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="nx">x</code> <code class="o">*</code> <code class="nx">x</code><code class="p">);</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_omitting-parentheses-around-single-parameters">
+<span class="section-number">13.3.1 </span>Omitting parentheses around single parameters <a class="header-anchor" href="#_omitting-parentheses-around-single-parameters" aria-hidden="true">#</a></h4>
+
+<p>Omitting the parentheses around the parameters is only possible if they consist of a single identifier:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code>&gt; [1,2,3].map(x =&gt; 2 * x)
+[ 2, 4, 6 ]
+</pre></div>
+
+</figure>
+
+<p>As soon as there is anything else, you have to type the parentheses, even if there is only a single parameter. For example, you need parens if you destructure a single parameter:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code>&gt; [[1,2], [3,4]].map(([a,b]) =&gt; a + b)
+[ 3, 7 ]
+</pre></div>
+
+</figure>
+
+<p>And you need parens if a single parameter has a default value (<code>undefined</code> triggers the default value!):</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code>&gt; [1, undefined, 3].map((x=&apos;yes&apos;) =&gt; x)
+[ 1, &apos;yes&apos;, 3 ]
+</pre></div>
+
+</figure>
+
+
+<h3 id="sec_lexical-variables">
+<span class="section-number">13.4 </span>Lexical variables <a class="header-anchor" href="#sec_lexical-variables" aria-hidden="true">#</a></h3>
+
+<h4 id="_propagating-variable-values-static-versus-dynamic">
+<span class="section-number">13.4.1 </span>Propagating variable values: static versus dynamic <a class="header-anchor" href="#_propagating-variable-values-static-versus-dynamic" aria-hidden="true">#</a></h4>
+
+<p>The following are two ways in which the values of variables can be propagated.</p>
+
+<p>First, statically (lexically): Where a variable is accessible is determined by the structure of the program. Variables declared in a scope are accessible in all scopes nested inside it (unless shadowed). For example:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">x</code> <code class="o">=</code> <code class="mi">123</code><code class="p">;</code>
+
+<code class="kd">function</code> <code class="nx">foo</code><code class="p">(</code><code class="nx">y</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">x</code><code class="p">;</code> <code class="c1">// value received statically</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>Second, dynamically: Variable values can be propagated via function calls. For example:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">bar</code><code class="p">(</code><code class="nx">arg</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">arg</code><code class="p">;</code> <code class="c1">// value received dynamically</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_variables-that-are-lexical-in-arrow-functions">
+<span class="section-number">13.4.2 </span>Variables that are lexical in arrow functions <a class="header-anchor" href="#_variables-that-are-lexical-in-arrow-functions" aria-hidden="true">#</a></h4>
+
+<p>The source of <code>this</code> is an important distinguishing aspect of arrow functions:</p>
+
+<ul>
+  <li>Traditional functions have a <em>dynamic <code>this</code></em>; its value is determined by how they are called.</li>
+  <li>Arrow functions have a <em>lexical <code>this</code></em>; its value is determined by the surrounding scope.</li>
+</ul>
+
+<p>The <a href="http://www.ecma-international.org/ecma-262/6.0/#sec-arrow-function-definitions-runtime-semantics-evaluation">complete list</a> of variables whose values are determined lexically is:</p>
+
+<ul>
+  <li><code>arguments</code></li>
+  <li><code>super</code></li>
+  <li><code>this</code></li>
+  <li><code>new.target</code></li>
+</ul>
+
+
+<h3 id="sec_syntactic-pitfalls-arrow-functions">
+<span class="section-number">13.5 </span>Syntax pitfalls <a class="header-anchor" href="#sec_syntactic-pitfalls-arrow-functions" aria-hidden="true">#</a></h3>
+
+<p>There are a few syntax-related details that can sometimes trip you up.</p>
+
+
+<h4 id="sec_arrow-functions-bind-loosely">
+<span class="section-number">13.5.1 </span>Arrow functions bind very loosely <a class="header-anchor" href="#sec_arrow-functions-bind-loosely" aria-hidden="true">#</a></h4>
+
+
+<p>If you view <code>=&gt;</code> as an operator, you could say that it has a low precedence, that it binds loosely. That means that if it is in conflict with other operators, they usually win.</p>
+
+<p>The reason for that is to allow an expression body to &#x201C;stick together&#x201D;:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">f</code> <code class="o">=</code> <code class="nx">x</code> <code class="p">=&gt;</code> <code class="p">(</code><code class="nx">x</code> <code class="o">%</code> <code class="mi">2</code><code class="p">)</code> <code class="o">===</code> <code class="mi">0</code> <code class="o">?</code> <code class="nx">x</code> <code class="o">:</code> <code class="mi">0</code><code class="p">;</code>
+</pre></div>
+
+</figure>
+
+<p>In other words, we want <code>=&gt;</code> to lose the fight against <code>===</code> and <code>?</code>. We want it to be interpreted as follows</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">f</code> <code class="o">=</code> <code class="nx">x</code> <code class="p">=&gt;</code> <code class="p">((</code><code class="nx">x</code> <code class="o">%</code> <code class="mi">2</code><code class="p">)</code> <code class="o">===</code> <code class="mi">0</code> <code class="o">?</code> <code class="nx">x</code> <code class="o">:</code> <code class="mi">0</code><code class="p">);</code>
+</pre></div>
+
+</figure>
+
+<p>If <code>=&gt;</code> won against both, it would look like this:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">f</code> <code class="o">=</code> <code class="p">(</code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="p">(</code><code class="nx">x</code> <code class="o">%</code> <code class="mi">2</code><code class="p">))</code> <code class="o">===</code> <code class="mi">0</code> <code class="o">?</code> <code class="nx">x</code> <code class="o">:</code> <code class="mi">0</code><code class="p">;</code>
+</pre></div>
+
+</figure>
+
+<p>If <code>=&gt;</code> lost against <code>===</code>, but won against <code>?</code>, it would look like this:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">f</code> <code class="o">=</code> <code class="p">(</code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="p">((</code><code class="nx">x</code> <code class="o">%</code> <code class="mi">2</code><code class="p">)</code> <code class="o">===</code> <code class="mi">0</code><code class="p">))</code> <code class="o">?</code> <code class="nx">x</code> <code class="o">:</code> <code class="mi">0</code><code class="p">;</code>
+</pre></div>
+
+</figure>
+
+<p>As a consequence, you often have to wrap arrow functions in parentheses if they compete with other operators. For example:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="k">typeof</code> <code class="p">()</code> <code class="p">=&gt;</code> <code class="p">{});</code> <code class="c1">// SyntaxError</code>
+<code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="k">typeof</code> <code class="p">(()</code> <code class="p">=&gt;</code> <code class="p">{}));</code> <code class="c1">// OK</code>
+</pre></div>
+
+</figure>
+
+<p>On the flip side, you can use <code>typeof</code> as an expression body without putting it in parens:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">f</code> <code class="o">=</code> <code class="nx">x</code> <code class="p">=&gt;</code> <code class="k">typeof</code> <code class="nx">x</code><code class="p">;</code>
+</pre></div>
+
+</figure>
+
+
+<h4 id="_no-line-break-after-arrow-function-parameters">
+<span class="section-number">13.5.2 </span>No line break after arrow function parameters <a class="header-anchor" href="#_no-line-break-after-arrow-function-parameters" aria-hidden="true">#</a></h4>
+
+<p>ES6 forbids a line break between the parameter definitions and the arrow of an arrow function:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">func1</code> <code class="o">=</code> <code class="p">(</code><code class="nx">x</code><code class="p">,</code> <code class="nx">y</code><code class="p">)</code> <code class="c1">// SyntaxError</code>
+<code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">x</code> <code class="o">+</code> <code class="nx">y</code><code class="p">;</code>
+<code class="p">};</code>
+<code class="kr">const</code> <code class="nx">func2</code> <code class="o">=</code> <code class="p">(</code><code class="nx">x</code><code class="p">,</code> <code class="nx">y</code><code class="p">)</code> <code class="p">=&gt;</code> <code class="c1">// OK</code>
+<code class="p">{</code>
+    <code class="k">return</code> <code class="nx">x</code> <code class="o">+</code> <code class="nx">y</code><code class="p">;</code>
+<code class="p">};</code>
+<code class="kr">const</code> <code class="nx">func3</code> <code class="o">=</code> <code class="p">(</code><code class="nx">x</code><code class="p">,</code> <code class="nx">y</code><code class="p">)</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="c1">// OK</code>
+    <code class="k">return</code> <code class="nx">x</code> <code class="o">+</code> <code class="nx">y</code><code class="p">;</code>
+<code class="p">};</code>
+
+<code class="kr">const</code> <code class="nx">func4</code> <code class="o">=</code> <code class="p">(</code><code class="nx">x</code><code class="p">,</code> <code class="nx">y</code><code class="p">)</code> <code class="c1">// SyntaxError</code>
+<code class="p">=&gt;</code> <code class="nx">x</code> <code class="o">+</code> <code class="nx">y</code><code class="p">;</code>
+<code class="kr">const</code> <code class="nx">func5</code> <code class="o">=</code> <code class="p">(</code><code class="nx">x</code><code class="p">,</code> <code class="nx">y</code><code class="p">)</code> <code class="p">=&gt;</code> <code class="c1">// OK</code>
+<code class="nx">x</code> <code class="o">+</code> <code class="nx">y</code><code class="p">;</code>
+</pre></div>
+
+</figure>
+
+<p>Line breaks <em>inside</em> parameter definitions are OK:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">func6</code> <code class="o">=</code> <code class="p">(</code> <code class="c1">// OK</code>
+    <code class="nx">x</code><code class="p">,</code>
+    <code class="nx">y</code>
+<code class="p">)</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">x</code> <code class="o">+</code> <code class="nx">y</code><code class="p">;</code>
+<code class="p">};</code>
+</pre></div>
+
+</figure>
+
+<p>The rationale for this restriction is that it keeps the options open w.r.t. &#x201C;headless&#x201D; arrow functions in the future (you&#x2019;d be able to omit the parentheses when defining an arrow function with zero parameters).</p>
+
+
+<h4 id="_you-cant-use-statements-as-expression-bodies">
+<span class="section-number">13.5.3 </span>You can&#x2019;t use statements as expression bodies <a class="header-anchor" href="#_you-cant-use-statements-as-expression-bodies" aria-hidden="true">#</a></h4>
+
+<h5 id="_expressions-versus-statements">
+<span class="section-number">13.5.3.1 </span>Expressions versus statements <a class="header-anchor" href="#_expressions-versus-statements" aria-hidden="true">#</a></h5>
+
+<p>Quick review (<a href="http://speakingjs.com/es5/ch07.html#expr_vs_stmt">consult &#x201C;Speaking JavaScript&#x201D; for more information</a>):</p>
+
+<p>Expressions produce (are evaluated to) values. Examples:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="mi">3</code> <code class="o">+</code> <code class="mi">4</code>
+<code class="nx">foo</code><code class="p">(</code><code class="mi">7</code><code class="p">)</code>
+<code class="s1">&apos;abc&apos;</code><code class="p">.</code><code class="nx">length</code>
+</pre></div>
+
+</figure>
+
+<p>Statements do things. Examples:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="k">while</code> <code class="p">(</code><code class="kc">true</code><code class="p">)</code> <code class="p">{</code> <code class="err">&#xB7;&#xB7;&#xB7;</code> <code class="p">}</code>
+<code class="k">return</code> <code class="mi">123</code><code class="p">;</code>
+</pre></div>
+
+</figure>
+
+<p>Most expressions<sup id="fnref-arrow_functions_1"><a href="leanpub-endnotes.html#fn-arrow_functions_1" rel="footnote">1</a></sup> can be used as statements, simply by mentioning them in statement positions:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">bar</code><code class="p">()</code> <code class="p">{</code>
+    <code class="mi">3</code> <code class="o">+</code> <code class="mi">4</code><code class="p">;</code>
+    <code class="nx">foo</code><code class="p">(</code><code class="mi">7</code><code class="p">);</code>
+    <code class="s1">&apos;abc&apos;</code><code class="p">.</code><code class="nx">length</code><code class="p">;</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<h5 id="_the-bodies-of-arrow-functions">
+<span class="section-number">13.5.3.2 </span>The bodies of arrow functions <a class="header-anchor" href="#_the-bodies-of-arrow-functions" aria-hidden="true">#</a></h5>
+
+<p>If an expression is the body of an arrow function, you don&#x2019;t need braces:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc</code><code class="p">.</code><code class="nx">then</code><code class="p">(</code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="nx">console</code><code class="p">.</code><code class="nx">log</code><code class="p">(</code><code class="nx">x</code><code class="p">));</code>
+</pre></div>
+
+</figure>
+
+<p>However, statements have to be put in braces:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">asyncFunc</code><code class="p">.</code><code class="k">catch</code><code class="p">(</code><code class="nx">x</code> <code class="p">=&gt;</code> <code class="p">{</code> <code class="k">throw</code> <code class="nx">x</code> <code class="p">});</code>
+</pre></div>
+
+</figure>
+
+
+<h4 id="_returning-object-literals">
+<span class="section-number">13.5.4 </span>Returning object literals <a class="header-anchor" href="#_returning-object-literals" aria-hidden="true">#</a></h4>
+
+<p>Some parts of JavaScript&#x2019;s syntax are ambiguous. Take, for example, the following code.</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="p">{</code>
+    <code class="nx">bar</code><code class="o">:</code> <code class="mi">123</code>
+<code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>It could be:</p>
+
+<ul>
+  <li>An object literal with a single property, <code>bar</code>.</li>
+  <li>A block with the label <code>bar</code> and the expression statement <code>123</code>.</li>
+</ul>
+
+<p>Given that the body of an arrow function can be either an expression or a statement, you have to put an object literal in parentheses if you want it to be an expression body:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="o">&gt;</code> <code class="nt">const</code> <code class="nt">f1</code> <code class="o">=</code> <code class="nt">x</code> <code class="o">=&gt;</code> <code class="o">(</code><code class="p">{</code> <code class="n">bar</code><code class="p">:</code> <code class="mi">123</code> <code class="p">}</code><code class="o">);</code>
+<code class="o">&gt;</code> <code class="nt">f1</code><code class="o">()</code>
+<code class="p">{</code> <code class="n">bar</code><code class="p">:</code> <code class="mi">123</code> <code class="p">}</code>
+</pre></div>
+
+</figure>
+
+<p>For comparison, this is an arrow function whose body is a block:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="o">&gt;</code> <code class="nt">const</code> <code class="nt">f2</code> <code class="o">=</code> <code class="nt">x</code> <code class="o">=&gt;</code> <code class="p">{</code> <code class="n">bar</code><code class="p">:</code> <code class="mi">123</code> <code class="p">}</code><code class="o">;</code>
+<code class="o">&gt;</code> <code class="nt">f2</code><code class="o">()</code>
+<code class="nt">undefined</code>
+</pre></div>
+
+</figure>
+
+
+<h3 id="iiaf">
+<span class="section-number">13.6 </span>Immediately-invoked arrow functions <a class="header-anchor" href="#iiaf" aria-hidden="true">#</a></h3>
+
+<p>Remember <a href="http://speakingjs.com/es5/ch16.html#iife">Immediately Invoked Function Expressions (IIFEs)</a>? They look as follows and are used to simulate block-scoping and value-returning blocks in ECMAScript 5:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="p">(</code><code class="kd">function</code> <code class="p">()</code> <code class="p">{</code> <code class="c1">// open IIFE</code>
+    <code class="c1">// inside IIFE</code>
+<code class="p">})();</code> <code class="c1">// close IIFE</code>
+</pre></div>
+
+</figure>
+
+<p>You can save a few characters if you use an Immediately Invoked Arrow Function (IIAF):</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="p">(()</code> <code class="p">=&gt;</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="mi">123</code>
+<code class="p">})();</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_semicolons">
+<span class="section-number">13.6.1 </span>Semicolons <a class="header-anchor" href="#_semicolons" aria-hidden="true">#</a></h4>
+
+<p>Similarly to IIFEs, you should terminate IIAFs with semicolons (or use <a href="http://speakingjs.com/es5/ch16.html#iife_prefix">an equivalent measure</a>), to avoid two consecutive IIAFs being interpreted as a function call (the first one as the function, the second one as the parameter).</p>
+
+<h4 id="_parenthesizing-arrow-function-with-block-bodies">
+<span class="section-number">13.6.2 </span>Parenthesizing arrow function with block bodies <a class="header-anchor" href="#_parenthesizing-arrow-function-with-block-bodies" aria-hidden="true">#</a></h4>
+
+<p>Even if the IIAF has a block body, you must wrap it in parentheses, because it can&#x2019;t be (directly) function-called. The reason for this syntactic constraint is consistency with arrow functions whose bodies are expressions (as explained next).</p>
+
+<p>As a consequence, the parentheses must be around the arrow function. In contrast, you have a choice with IIFEs &#x2013; you can either put the parentheses around the whole expression:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="p">(</code><code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">}());</code>
+</pre></div>
+
+</figure>
+
+<p>Or just around the function expression:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="p">(</code><code class="kd">function</code> <code class="p">()</code> <code class="p">{</code>
+    <code class="err">&#xB7;&#xB7;&#xB7;</code>
+<code class="p">})();</code>
+</pre></div>
+
+</figure>
+
+<p>Given how arrow functions work, the latter way of parenthesizing should be preferred from now on.</p>
+
+<h4 id="_parenthesizing-arrow-function-with-expression-bodies">
+<span class="section-number">13.6.3 </span>Parenthesizing arrow function with expression bodies <a class="header-anchor" href="#_parenthesizing-arrow-function-with-expression-bodies" aria-hidden="true">#</a></h4>
+
+<p>If you want to understand why you can&#x2019;t invoke an arrow function by putting parentheses immediately after it, you have to examine how expression bodies work: parentheses after an expression body should be part of the expression, not an invocation of the whole arrow function. This has to do with arrow functions binding loosely, as explained in <a href="ch_arrow-functions.html#sec_arrow-functions-bind-loosely">a previous section</a>.</p>
+
+<p>Let&#x2019;s look at an example:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">value</code> <code class="o">=</code> <code class="p">()</code> <code class="p">=&gt;</code> <code class="nx">foo</code><code class="p">();</code>
+</pre></div>
+
+</figure>
+
+<p>This should be interpreted as:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">value</code> <code class="o">=</code> <code class="p">()</code> <code class="p">=&gt;</code> <code class="p">(</code><code class="nx">foo</code><code class="p">());</code>
+</pre></div>
+
+</figure>
+
+<p>And not as:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">value</code> <code class="o">=</code> <code class="p">(()</code> <code class="p">=&gt;</code> <code class="nx">foo</code><code class="p">)();</code>
+</pre></div>
+
+</figure>
+
+<p><strong>Further reading:</strong> <a href="ch_callables.html#sec_iifes-in-es6">A section in the chapter on callable entities</a> has more information on using IIFEs and IIAFs in ES6. Spoiler: you rarely need them, as ES6 often provides better alternatives.</p>
+
+
+<h3 id="sec_arrow-func-vs-bind">
+<span class="section-number">13.7 </span>Arrow functions versus <code>bind()</code>
+ <a class="header-anchor" href="#sec_arrow-func-vs-bind" aria-hidden="true">#</a></h3>
+
+<p>ES6 arrow functions are often a compelling alternative to <code>Function.prototype.bind()</code>.</p>
+
+<h4 id="_extracting-methods">
+<span class="section-number">13.7.1 </span>Extracting methods <a class="header-anchor" href="#_extracting-methods" aria-hidden="true">#</a></h4>
+
+<p>If an extracted method is to work as a callback, you must specify a fixed <code>this</code>, otherwise it will be invoked as a function (and <code>this</code> will be <code>undefined</code> or the global object). For example:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">obj</code><code class="p">.</code><code class="nx">on</code><code class="p">(</code><code class="s1">&apos;anEvent&apos;</code><code class="p">,</code> <code class="k">this</code><code class="p">.</code><code class="nx">handleEvent</code><code class="p">.</code><code class="nx">bind</code><code class="p">(</code><code class="k">this</code><code class="p">));</code>
+</pre></div>
+
+</figure>
+
+<p>An alternative is to use an arrow function:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="nx">obj</code><code class="p">.</code><code class="nx">on</code><code class="p">(</code><code class="s1">&apos;anEvent&apos;</code><code class="p">,</code> <code class="nx">event</code> <code class="p">=&gt;</code> <code class="k">this</code><code class="p">.</code><code class="nx">handleEvent</code><code class="p">(</code><code class="nx">event</code><code class="p">));</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_this-via-parameters">
+<span class="section-number">13.7.2 </span><code>this</code> via parameters <a class="header-anchor" href="#_this-via-parameters" aria-hidden="true">#</a></h4>
+
+<p>The following code demonstrates a neat trick: For some methods, you don&#x2019;t need <code>bind()</code> for a callback, because they let you specify the value of <code>this</code>, via an additional parameter. <code>filter()</code> is one such method:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">as</code> <code class="o">=</code> <code class="k">new</code> <code class="nx">Set</code><code class="p">([</code><code class="mi">1</code><code class="p">,</code> <code class="mi">2</code><code class="p">,</code> <code class="mi">3</code><code class="p">]);</code>
+<code class="kr">const</code> <code class="nx">bs</code> <code class="o">=</code> <code class="k">new</code> <code class="nx">Set</code><code class="p">([</code><code class="mi">3</code><code class="p">,</code> <code class="mi">2</code><code class="p">,</code> <code class="mi">4</code><code class="p">]);</code>
+<code class="kr">const</code> <code class="nx">intersection</code> <code class="o">=</code> <code class="p">[...</code><code class="nx">as</code><code class="p">].</code><code class="nx">filter</code><code class="p">(</code><code class="nx">bs</code><code class="p">.</code><code class="nx">has</code><code class="p">,</code> <code class="nx">bs</code><code class="p">);</code>
+    <code class="c1">// [2, 3]</code>
+</pre></div>
+
+</figure>
+
+<p>However, this code is easier to understand if you use an arrow function:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">as</code> <code class="o">=</code> <code class="k">new</code> <code class="nx">Set</code><code class="p">([</code><code class="mi">1</code><code class="p">,</code> <code class="mi">2</code><code class="p">,</code> <code class="mi">3</code><code class="p">]);</code>
+<code class="kr">const</code> <code class="nx">bs</code> <code class="o">=</code> <code class="k">new</code> <code class="nx">Set</code><code class="p">([</code><code class="mi">3</code><code class="p">,</code> <code class="mi">2</code><code class="p">,</code> <code class="mi">4</code><code class="p">]);</code>
+<code class="kr">const</code> <code class="nx">intersection</code> <code class="o">=</code> <code class="p">[...</code><code class="nx">as</code><code class="p">].</code><code class="nx">filter</code><code class="p">(</code><code class="nx">a</code> <code class="p">=&gt;</code> <code class="nx">bs</code><code class="p">.</code><code class="nx">has</code><code class="p">(</code><code class="nx">a</code><code class="p">));</code>
+    <code class="c1">// [2, 3]</code>
+</pre></div>
+
+</figure>
+
+<h4 id="_partial-evaluation">
+<span class="section-number">13.7.3 </span>Partial evaluation <a class="header-anchor" href="#_partial-evaluation" aria-hidden="true">#</a></h4>
+
+<p><code>bind()</code> enables you to do <a href="http://www.2ality.com/2011/09/currying-vs-part-eval.html"><em>partial evaluation</em></a>, you can create new functions by filling in parameters of an existing function:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kd">function</code> <code class="nx">add</code><code class="p">(</code><code class="nx">x</code><code class="p">,</code> <code class="nx">y</code><code class="p">)</code> <code class="p">{</code>
+    <code class="k">return</code> <code class="nx">x</code> <code class="o">+</code> <code class="nx">y</code><code class="p">;</code>
+<code class="p">}</code>
+<code class="kr">const</code> <code class="nx">plus1</code> <code class="o">=</code> <code class="nx">add</code><code class="p">.</code><code class="nx">bind</code><code class="p">(</code><code class="kc">undefined</code><code class="p">,</code> <code class="mi">1</code><code class="p">);</code>
+</pre></div>
+
+</figure>
+
+<p>Again, I find an arrow function easier to understand:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code><code class="kr">const</code> <code class="nx">plus1</code> <code class="o">=</code> <code class="nx">y</code> <code class="p">=&gt;</code> <code class="nx">add</code><code class="p">(</code><code class="mi">1</code><code class="p">,</code> <code class="nx">y</code><code class="p">);</code>
+</pre></div>
+
+</figure>
+
+
+<h3 id="sec_arrow-func-vs-normal-func">
+<span class="section-number">13.8 </span>Arrow functions versus normal functions <a class="header-anchor" href="#sec_arrow-func-vs-normal-func" aria-hidden="true">#</a></h3>
+
+<p>An arrow function is different from a normal function in only two ways:</p>
+
+<ul>
+  <li>The following constructs are lexical: <code>arguments</code>, <code>super</code>, <code>this</code>, <code>new.target</code>
+</li>
+  <li>It can&#x2019;t be used as a constructor: Normal functions support <code>new</code> via the internal method <code>[[Construct]]</code> and the property <code>prototype</code>. Arrow functions have neither, which is why <code>new (() =&gt; {})</code> throws an error.</li>
+</ul>
+
+<p>Apart from that, there are no observable differences between an arrow function and a normal function. For example, <code>typeof</code> and <code>instanceof</code> produce the same results:</p>
+
+<figure class="code">
+<div class="highlight"><pre><code></code>&gt; typeof (() =&gt; {})
+&apos;function&apos;
+&gt; () =&gt; {} instanceof Function
+true
+
+&gt; typeof function () {}
+&apos;function&apos;
+&gt; function () {} instanceof Function
+true
+</pre></div>
+
+</figure>
+
+<p>Consult <a href="ch_callables.html#sec_callables-style">the chapter on callable entities</a> for more information on when to use arrow functions and when to use traditional functions.</p>
+
+
+<h3 id="sec_faq-arrow-functions">
+<span class="section-number">13.9 </span>FAQ: arrow functions <a class="header-anchor" href="#sec_faq-arrow-functions" aria-hidden="true">#</a></h3>
+
+
+<h4 id="_why-are-there-fat-arrow-functions--in-es6-but-no-thin-arrow-functions--">
+<span class="section-number">13.9.1 </span>Why are there &#x201C;fat&#x201D; arrow functions (<code>=&gt;</code>) in ES6, but no &#x201C;thin&#x201D; arrow functions (<code>-&gt;</code>)? <a class="header-anchor" href="#_why-are-there-fat-arrow-functions--in-es6-but-no-thin-arrow-functions--" aria-hidden="true">#</a></h4>
+
+<p>ECMAScript 6 has syntax for functions with a lexical <code>this</code>, so-called <em>arrow functions</em>. However, it does not have arrow syntax for functions with dynamic <code>this</code>. That omission was deliberate; method definitions cover most of the use cases for thin arrows. If you really need dynamic <code>this</code>, you can still use a traditional function expression.</p>
+
+
+
+
+
+
+<div class="next-chapter">
+    Next: <a href="ch_oop-besides-classes.html">14. New OOP features besides classes</a>
+</div>
+
+
+</div>
+</body>
+</html>
